@@ -1,0 +1,2 @@
+pip install --prefer-binary pyscf
+pip install -U pyberny
