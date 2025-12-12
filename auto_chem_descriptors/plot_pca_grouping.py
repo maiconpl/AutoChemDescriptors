@@ -13,6 +13,8 @@ from sklearn.feature_selection import SelectPercentile
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 
+from pca_grouping_report import generate_pca_grouping_report
+
 # Otherwise, does not work, it is mandatory:
 import matplotlib
 matplotlib.use('Agg') # or 'Qt5Agg', 'TkAgg', etc.
@@ -95,4 +97,13 @@ def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
     '''
 
     plt.savefig('plot_PCA_grouping.png',  bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
+
+    report_filename = generate_pca_grouping_report(X_pca,
+                                                   pca.explained_variance_ratio_,
+                                                   labels,
+                                                   analysis,
+                                                   molecular_encoding,
+                                                   descriptors_list)
+    print("PCA grouping report saved to:", report_filename)
+
     plt.close()
