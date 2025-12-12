@@ -1,2 +1,10 @@
-pip install --prefer-binary pyscf
-pip install -U pyberny
+ase
+dscribe
+matplotlib
+numpy
+pyscf
+pyberny
+rdkit
+scipy
+scikit-learn
+torch
