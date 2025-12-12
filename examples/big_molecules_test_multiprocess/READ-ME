@@ -1,6 +1,0 @@
-# 08/12/25
-
-Command to check the parallelism:
-
-ps aux | grep python
-pgrep -af python
