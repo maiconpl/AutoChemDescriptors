@@ -3,11 +3,23 @@
 Created on December 6, 2025
 
 @author: maicon
+Last modification by MPL: 13/12/25 to handle smiles erro.
 Last modification by MPL: 07/12/25.
 '''
 
 #from rdkit import Chem
 from rdkit.Chem.Draw import MolToFile
+
+def smiles_checker(smiles_string):
+
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles(smiles_string, sanitize=False)
+
+    if mol is None:
+       return "Invalid SMILES (Syntax error)"
+    else:
+       return "SMILES is syntactically valid"
 
 def get_coordinates_ordered_by_atoms_group(atoms_type_ordered, atoms_symbols, atoms_xyz):
 

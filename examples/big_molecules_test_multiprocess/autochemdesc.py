@@ -40,12 +40,12 @@ if __name__ == '__main__':
     'program': 'pyscf',
     'basis': 'sto-3g',
     'maxsteps': 2,
-    #'maxsteps': 10,
+    #'maxsteps': 20,
     }
 
     analysis = {}
 
-    n_components=3
+    n_components=4
     analysis = {
     "pca_grouping": [True, n_components],
 
