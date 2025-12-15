@@ -2,15 +2,15 @@
 Created on December 05, 2025
 
 @author: maicon
-Last modification by MPL: 07/12/2025.
+Last modification by MPL: 15/12/2025.
 '''
 def software_information_auto_chem_descriptors():
 
     print ("\n---------------------------------------------------------------------------------------------------------------")
     print ("---------------------------------------------------------------------------------------------------------------")
     print (" AutoChemDescriptors: Automated Chemical Descriptor Builder for Machine Learning.")
-    print (" Version 0.0.2, 07/12/2025, to adapt to multiprocessing in Python3.x.")
-    print (" It was developed by Maicon P. Lourenco (MPL) at GAMIAC group.")
+    print (" Version 0.0.3, 15/12/2025, to adapt to multiprocessing in Python3.x and manage the view.")
+    print (" It was developed by Maicon P. Lourenco (MPL) and Clayton Filho at GAMIAC group.")
     print (" The software or its parts should not be distributed to anynoe without the authors permision.")
     print (" Any change made in the software should be redirected to the authors.")
     print (" Please, in case of publication using our active learning method and codes, cite: ")

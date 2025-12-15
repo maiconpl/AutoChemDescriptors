@@ -6,7 +6,7 @@ Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF 
 '''
 
 from utils import get_coordinates_ordered_by_atoms_group, smile_molecule_representation
-from get_describe_descriptor import get_describe_descriptor
+from get_dscribe_descriptor import get_dscribe_descriptor
 
 from get_pyscf_calculations import get_pyscf_calculations
 
@@ -72,7 +72,7 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
         print("zaza atoms_type_counter:", atoms_type_counter, "".join(atoms_type_counter))
 
         if descriptors_type == "MBTR":
-               descriptor = get_describe_descriptor(atoms_symbols_ordered, atoms_xyz_ordered, system_type="cluster", descriptor_type="mbtr")
+               descriptor = get_dscribe_descriptor(atoms_symbols_ordered, atoms_xyz_ordered, system_type="cluster", descriptor_type="mbtr")
 
         descriptors.append(descriptor)
 

@@ -13,11 +13,11 @@ def rdkit_descriptor_function(mol):
 
     Chem.AllChem.EmbedMolecule(mol)
 
-    print (Descriptors.FpDensityMorgan1(mol), Descriptors.FpDensityMorgan2(mol), Descriptors.FpDensityMorgan3(mol), Descriptors.MaxAbsPartialCharge(mol, force=False), Descriptors.MaxPartialCharge(mol, force=False), Descriptors.MinAbsPartialCharge(mol, force=False), Descriptors.MinPartialCharge(mol, force=False), Descriptors.ExactMolWt(mol), Descriptors.NumRadicalElectrons(mol), Descriptors.NumValenceElectrons(mol), AllChem.ComputeMolVolume(mol), Descriptors.HeavyAtomMolWt(mol))
+    #print (Descriptors.FpDensityMorgan1(mol), Descriptors.FpDensityMorgan2(mol), Descriptors.FpDensityMorgan3(mol), Descriptors.MaxAbsPartialCharge(mol, force=False), Descriptors.MaxPartialCharge(mol, force=False), Descriptors.MinAbsPartialCharge(mol, force=False), Descriptors.MinPartialCharge(mol, force=False), Descriptors.ExactMolWt(mol), Descriptors.NumRadicalElectrons(mol), Descriptors.NumValenceElectrons(mol), AllChem.ComputeMolVolume(mol), Descriptors.HeavyAtomMolWt(mol))
 
     descriptor = [Descriptors.FpDensityMorgan1(mol), Descriptors.FpDensityMorgan2(mol), Descriptors.FpDensityMorgan3(mol), Descriptors.MaxAbsPartialCharge(mol, force=False), Descriptors.MaxPartialCharge(mol, force=False), Descriptors.MinAbsPartialCharge(mol, force=False), Descriptors.MinPartialCharge(mol, force=False), Descriptors.ExactMolWt(mol), Descriptors.NumRadicalElectrons(mol), Descriptors.NumValenceElectrons(mol), AllChem.ComputeMolVolume(mol), Descriptors.HeavyAtomMolWt(mol)]
 
-    print("descriptor into descriptor_function:", descriptor)
+    #print("descriptor into descriptor_function:", descriptor)
 
     return descriptor
 

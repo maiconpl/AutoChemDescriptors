@@ -1,0 +1,89 @@
+
+---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+ AutoChemDescriptors: Automated Chemical Descriptor Builder for Machine Learning.
+ Version 0.0.3, 15/12/2025, to adapt to multiprocessing in Python3.x and manage the view.
+ It was developed by Maicon P. Lourenco (MPL) and Clayton Filho at GAMIAC group.
+ The software or its parts should not be distributed to anynoe without the authors permision.
+ Any change made in the software should be redirected to the authors.
+ Please, in case of publication using our active learning method and codes, cite: 
+ https://pubs.rsc.org/en/content/articlelanding/2025/cp/d5cp02747k
+ https://dx.doi.org/10.21577/0103-5053.20250054
+ https://arxiv.org/abs/2407.18731,
+ https://doi.org/10.1139/cjc-2022-0198,
+ https://doi.org/10.1021/acs.jctc.3c00566,
+ https://doi.org/10.1007/s00214-021-02766-5,
+ https://doi.org/10.1007/s00214-021-02820-2,
+ https://doi.org/10.1007/s00894-020-04438-w.
+ All its use and results are of responsability of the users only.
+ Author contact: maiconpl01@gmail.com
+ Enjoy it!!!
+---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+--------------------------
+------ BEGIN OUTPUT -------
+--------------------------
+
+Begin input prints:
+input_flow_controller: {'molecular_encoding': 'SMILES', 'descriptors_type': 'SMILES'}
+molecules_coded_list: ['c1(OCC(O)(=O))c(Cl)cc(Cl)cc1', 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C', 'c1ccc(Cl)cc1(Cl)', 'c1ccc(Cl)cc1(Cl)']
+calculator_controlle: {}
+analysis: {'pca_grouping': [True, 3], 'molecules_color': ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y', 'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'], 'molecules_label': ['c1(OCC(O)(=O))c(Cl)cc(Cl)cc1', 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C', 'c1ccc(Cl)cc1(Cl)', 'c1ccc(Cl)cc1(Cl)']}
+End input prints.
+
+Begin descriptors "SMILES" information:
+molecules_coded_list: ['c1(OCC(O)(=O))c(Cl)cc(Cl)cc1', 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C', 'c1ccc(Cl)cc1(Cl)', 'c1ccc(Cl)cc1(Cl)']
+c1(OCC(O)(=O))c(Cl)cc(Cl)cc1: SMILES is syntactically valid
+CN1C=NC2=C1C(=O)N(C)C(=O)N2C: SMILES is syntactically valid
+c1ccc(Cl)cc1(Cl): SMILES is syntactically valid
+c1ccc(Cl)cc1(Cl): SMILES is syntactically valid
+string01: c1(OCC(O)(=O))c(Cl)cc(Cl)cc1
+string01: CN1C=NC2=C1C(=O)N(C)C(=O)N2C
+string01: c1ccc(Cl)cc1(Cl)
+string01: c1ccc(Cl)cc1(Cl)
+into  get_rdkit_calculations: ['c1(OCC(O)(=O))c(Cl)cc(Cl)cc1', 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C', 'c1ccc(Cl)cc1(Cl)', 'c1ccc(Cl)cc1(Cl)']
+molecules_to_be_created in rdkit: CN1C=NC2=C1C(=O)N(C)C(=O)N2C
+molecules_to_be_created in rdkit: c1ccc(Cl)cc1(Cl)
+molecules_to_be_created in rdkit: c1ccc(Cl)cc1(Cl)
+molecules_to_be_created in rdkit: c1(OCC(O)(=O))c(Cl)cc(Cl)cc1
+xyz_new from mull: [[1.4615384615384615, 2.1538461538461537, 2.6923076923076925, 0.4803484445932945, 0.3412236092634533, 0.3412236092634533, -0.4803484445932945, 219.969399412, 0, 70, 156.23200000000003, 214.99099999999996], [1.1428571428571428, 1.7857142857142858, 2.4285714285714284, 0.3317034326359888, 0.3317034326359888, 0.3278634660994821, -0.3278634660994821, 194.08037556, 0, 74, 146.63200000000003, 184.11399999999998], [1.0, 1.5, 1.75, 0.0842889078864603, 0.0420299105976315, 0.0420299105976315, -0.0842889078864603, 145.969005488, 0, 42, 106.28000000000003, 142.97199999999998], [1.0, 1.5, 1.75, 0.0842889078864603, 0.0420299105976315, 0.0420299105976315, -0.0842889078864603, 145.969005488, 0, 42, 106.44000000000003, 142.97199999999998]]
+descriptor: [[1.4615384615384615, 2.1538461538461537, 2.6923076923076925, 0.4803484445932945, 0.3412236092634533, 0.3412236092634533, -0.4803484445932945, 219.969399412, 0, 70, 156.23200000000003, 214.99099999999996], [1.1428571428571428, 1.7857142857142858, 2.4285714285714284, 0.3317034326359888, 0.3317034326359888, 0.3278634660994821, -0.3278634660994821, 194.08037556, 0, 74, 146.63200000000003, 184.11399999999998], [1.0, 1.5, 1.75, 0.0842889078864603, 0.0420299105976315, 0.0420299105976315, -0.0842889078864603, 145.969005488, 0, 42, 106.28000000000003, 142.97199999999998], [1.0, 1.5, 1.75, 0.0842889078864603, 0.0420299105976315, 0.0420299105976315, -0.0842889078864603, 145.969005488, 0, 42, 106.44000000000003, 142.97199999999998]]
+
+Desciptors list('4' molecules/substances; '12' features):
+# FpDensityMorgan1 FpDensityMorgan2 FpDensityMorgan3 MaxAbsPartialCharge MaxPartialCharge MinAbsPartialCharge MinPartialCharge ExactMolWt NumRadicalElectrons NumValenceElectrons ComputeMolVolume HeavyAtomMolWt
+1.4615384615384615 2.1538461538461537 2.6923076923076925 0.4803484445932945 0.3412236092634533 0.3412236092634533 -0.4803484445932945 219.969399412 0 70 156.23200000000003 214.99099999999996
+1.1428571428571428 1.7857142857142858 2.4285714285714284 0.3317034326359888 0.3317034326359888 0.3278634660994821 -0.3278634660994821 194.08037556 0 74 146.63200000000003 184.11399999999998
+1.0 1.5 1.75 0.0842889078864603 0.0420299105976315 0.0420299105976315 -0.0842889078864603 145.969005488 0 42 106.28000000000003 142.97199999999998
+1.0 1.5 1.75 0.0842889078864603 0.0420299105976315 0.0420299105976315 -0.0842889078864603 145.969005488 0 42 106.44000000000003 142.97199999999998
+
+End descriptors "SMILES" information.
+
+PCA grouping analysis:
+
+Matrix X:
+[1.4615384615384615, 2.1538461538461537, 2.6923076923076925, 0.4803484445932945, 0.3412236092634533, 0.3412236092634533, -0.4803484445932945, 219.969399412, 0, 70, 156.23200000000003, 214.99099999999996]
+[1.1428571428571428, 1.7857142857142858, 2.4285714285714284, 0.3317034326359888, 0.3317034326359888, 0.3278634660994821, -0.3278634660994821, 194.08037556, 0, 74, 146.63200000000003, 184.11399999999998]
+[1.0, 1.5, 1.75, 0.0842889078864603, 0.0420299105976315, 0.0420299105976315, -0.0842889078864603, 145.969005488, 0, 42, 106.28000000000003, 142.97199999999998]
+[1.0, 1.5, 1.75, 0.0842889078864603, 0.0420299105976315, 0.0420299105976315, -0.0842889078864603, 145.969005488, 0, 42, 106.44000000000003, 142.97199999999998]
+Each component weight: [9.58504697e-01 4.14948089e-02 4.94573273e-07]
+Sum of the components weight: 1.0
+size X_pca: 4 4
+kkkk 03
+
+------------------------
+------ END OUTPUT ------
+------------------------
+
+BEGIN: main libraries verion:
+Python version: 3.13.5
+RDKit version: 2025.09.3
+PySCF: 2.11.0
+Numpy: 1.26.4
+Scipy: 1.15.3
+Matplotlib: 3.10.0
+ASE: 3.26.0
+END: main libraries version.
+
+Execution time: 0:00:02.322811
+Date and time of execution: 2025-12-13, 19:27

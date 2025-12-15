@@ -19,10 +19,10 @@ from get_atom_information import  getAtomType, getAtomTypeCounter
 
 import numpy as np
 
-def get_describe_descriptor(atomSymbols, atoms_xyz, system_type, descriptor_type):
+def get_dscribe_descriptor(atomSymbols, atoms_xyz, system_type, descriptor_type):
 
-    print("into get_describe_descriptor atomSymbols:", atomSymbols)
-    print("into get_describe_descriptor atoms_xyz:", atoms_xyz)
+    print("into get_dscribe_descriptor atomSymbols:", atomSymbols)
+    print("into get_dscribe_descriptor atoms_xyz:", atoms_xyz)
     #self.atomSymbols = atomSymbols
 
     if system_type == "cluster":

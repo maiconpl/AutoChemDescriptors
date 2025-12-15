@@ -12,7 +12,7 @@ from utils import get_coordinates_ordered_by_atoms_group
 
 #from dscribe.descriptors import CoulombMatrix
 
-from get_describe_descriptor import get_describe_descriptor
+from get_dscribe_descriptor import get_dscribe_descriptor
 #from dscribe.descriptors import SineMatrix
 #from dscribe.descriptors import EwaldSumMatrix
 #from dscribe.descriptors import MBTR
@@ -164,8 +164,8 @@ print("zaza atoms_xyz_ordered:", atoms_xyz_ordered)
 print("zaza atoms_symbols_ordered:", atoms_symbols_ordered)
 print("zaza atoms_type_counter:", atoms_type_counter, "".join(atoms_type_counter))
 
-descriptor = get_describe_descriptor(atoms_symbols_ordered, atoms_xyz_ordered, system_type="cluster", descriptor_type="mbtr")
+descriptor = get_dscribe_descriptor(atoms_symbols_ordered, atoms_xyz_ordered, system_type="cluster", descriptor_type="mbtr")
 
-#descriptor = get_describe_descriptor(atoms_symbols, atoms_xyz, system_type="cluster", descriptor_type="mbtr")
+#descriptor = get_dscribe_descriptor(atoms_symbols, atoms_xyz, system_type="cluster", descriptor_type="mbtr")
 
 print("descriptor:", descriptor)
