@@ -98,4 +98,4 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - **Console logs** register library versions and execution timestamps for reproducibility.
 
 ## Support and citation
-AutoChemDescriptors was created by Maicon P. Lourenço (GAMIAC). Cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
+AutoChemDescriptors was created by Maicon P. Lourenço and Clayton Vieira Fraga Filho (GAMIAC), from chemistry and computer science background, respectively. This research is done in collaboration with Dennis R. Salahub (University of Calgary) and Jiri Hostas (NRC Canada). Cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
