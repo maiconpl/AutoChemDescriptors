@@ -24,7 +24,7 @@ def pyscf_calculator(atoms_to_be_optimized_string, calculator_controller):
     maxsteps = calculator_controller['maxsteps']
     basis = calculator_controller['basis']
 
-    print("atoms_to_be_optimized_string in calc:", atoms_to_be_optimized_string)
+    print("\natoms_to_be_optimized_string in 'pyscf_calculator':", atoms_to_be_optimized_string)
 
     #mol = gto.M(atom=atoms_to_be_optimized_string, basis='sto-3g')
     mol = gto.M(atom=atoms_to_be_optimized_string, basis=basis)
@@ -32,7 +32,7 @@ def pyscf_calculator(atoms_to_be_optimized_string, calculator_controller):
 
     mol_eq = optimize(mf, maxsteps=maxsteps)
     #mol_eq = optimize(mf, maxsteps=10)
-    print("ooo kkk:", mol_eq.tostring())
+    print("atoms_optimized_string in 'pyscf_calculator':", mol_eq.tostring())
 
     xyz_new = mol_eq.tostring().split()
 

@@ -21,7 +21,7 @@ def smiles_checker(smiles_string):
     else:
        return "SMILES is syntactically valid"
 
-def get_coordinates_ordered_by_atoms_group(atoms_type_ordered, atoms_symbols, atoms_xyz):
+def get_coordinates_ordered_by_atoms_group(atoms_type_ordered, atoms_symbols, atoms_xyz, is_debug_true):
 
     # atoms_symbols (not ordened), i.e.: ['C', 'O', 'C', 'C', 'O', 'O', 'C', 'Cl', 'C', 'C', 'Cl', 'C', 'C', 'H', 'H', 'H', 'H', 'H', 'H']
     # atoms_type, i.e.: ['C', 'O', 'Cl', 'H']
@@ -34,13 +34,23 @@ def get_coordinates_ordered_by_atoms_group(atoms_type_ordered, atoms_symbols, at
         for j in range(len(atoms_symbols)):
 
             if atoms_symbols[j] == atoms_type_ordered[i]:
-               print("zoi:", atoms_symbols[j], *atoms_xyz[j])
+
+               #if is_debug_true == True:
+               #   print("ordered atoms in groups:", atoms_symbols[j], *atoms_xyz[j])
+
                atoms_symbols_ordered.append(atoms_symbols[j])
                atoms_xyz_ordered.append(atoms_xyz[j])
 
+    if is_debug_true == True:
+
+       print("begin: ordered atoms, from optimized geometry, in groups:")
+       for i in range(len(atoms_symbols)):
+           print(atoms_symbols_ordered[i], *atoms_xyz_ordered[i])
+       print("end: ordered atoms, from optimized geometry, in groups.\n")
+
     return atoms_symbols_ordered, atoms_xyz_ordered
 
-def smile_molecule_representation(n_molecules, molecules_coded_list, is_debug_true):
+def smile_molecule_representation(n_molecules, molecules_coded_list, is_debug_true=True):
 
     mol_list = [] # to be returned
 
@@ -50,7 +60,10 @@ def smile_molecule_representation(n_molecules, molecules_coded_list, is_debug_tr
         mol01 = None
 
         string01 = molecules_coded_list[iMain]
-        print("string01:", string01)
+        #print("string01:", string01)
+   
+        if is_debug_true == True:
+           print(string01 + str(":"), smiles_checker(string01))
 
         mol01 = Chem.MolFromSmiles(string01)
 

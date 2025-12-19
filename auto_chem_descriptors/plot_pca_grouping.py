@@ -75,7 +75,6 @@ def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
     #plt.legend(loc='upper center', prop={'size':9})
     #plt.legend(loc='upper right', prop={'size':9})
     #plt.legend(loc='upper right', prop={'size':7}, bbox_to_anchor=(1.2, 1.0))
-    print("kkkk 03")
     lgd = plt.legend(loc='upper right', prop={'size':7}, bbox_to_anchor=(1.2, 1.0))
 
     plt.axvline(x=0, color='k', linestyle="--")

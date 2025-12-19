@@ -1,7 +1,8 @@
 '''
 Created on December 06, 2025
 
-@author: maicon
+@author: maicon & clayton
+Last modification by MPL: 17/12/2025 to implement the analysis and debug.; )
 Last modification by MPL: 11/12/2025 to implement the analysis and debug.; )
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
 '''
@@ -30,6 +31,8 @@ def get_coordinates_from_smiles(n_molecules, molecules_coded_list, is_force_fiel
 
         # 2-Create from smiles code the descriptors
         mol=mol_list[iMain]
+
+        print("\nmolecule similes code" + " '" + Chem.MolToSmiles(mol) + "':")
 
         # 3-Create from smiles code the descriptors get molecule coordinates
 
@@ -61,16 +64,16 @@ def get_coordinates_from_smiles(n_molecules, molecules_coded_list, is_force_fiel
                outf.write(xyz)
 
         xyz_new = xyz.split()[1:]
-        print("xyz_new:", xyz_new)
+        print("\nxyz_new (non-optimized):", xyz_new)
 
         atoms_to_be_optimized_string = "" # from RDKit force field
         for i in range(0, len(xyz_new), 4):
-           print("kk", xyz_new[i])
-           print("kk", xyz_new[i: i + 4])
+           #print("kk", xyz_new[i])
+           #print("kk", xyz_new[i: i + 4])
            atoms_to_be_optimized_string = atoms_to_be_optimized_string + "  ".join(xyz_new[i: i + 4]) + "; "
-           print( )
+           #print( )
 
-        print("zaza " + str( Chem.MolToSmiles(mol_list[iMain]) ) + ":", atoms_to_be_optimized_string)
+        #print("zaza " + str( Chem.MolToSmiles(mol_list[iMain]) ) + ":", atoms_to_be_optimized_string)
         atoms_to_be_optimized_string_list.append(atoms_to_be_optimized_string)
 
         del mol
