@@ -9,7 +9,7 @@ def software_information_auto_chem_descriptors():
     print ("\n---------------------------------------------------------------------------------------------------------------")
     print ("---------------------------------------------------------------------------------------------------------------")
     print (" AutoChemDescriptors: Automated Chemical Descriptor Builder for Machine Learning.")
-    print (" Version 0.0.3, 15/12/2025, to adapt to multiprocessing in Python3.x and manage the view.")
+    print (" Version 0.0.4, 18/12/2025, to adapt to multiprocessing in Python3.x and manage the view.")
     print (" It was developed by Maicon P. Lourenco (MPL) and Clayton Filho at GAMIAC group.")
     print (" The software or its parts should not be distributed to anynoe without the authors permision.")
     print (" Any change made in the software should be redirected to the authors.")
