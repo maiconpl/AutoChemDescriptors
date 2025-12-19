@@ -36,10 +36,10 @@ if __name__ == '__main__':
                 ]
 
     calculator_controller = {
-    'is_force_field_true': True, # from RDKit, to get the pre-optimized XYZ.
+    'is_force_field_true': False, # from RDKit, to get the pre-optimized XYZ.
     'program': 'pyscf',
     'basis': 'sto-3g',
-    'maxsteps': 2,
+    'maxsteps': 1,
     #'maxsteps': 20,
     }
 

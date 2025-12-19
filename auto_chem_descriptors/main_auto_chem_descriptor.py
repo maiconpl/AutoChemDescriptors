@@ -3,7 +3,8 @@
 Created on December 03, 2025
 
 @author: maicon & clayton
-Last modification by MPL: 13/12/2025 to implement the output from print and deal with debug.
+Last modification by MPL: 17/12/2025 to implement the analysis and debug.; )
+Last modification by MPL: 17/12/2025 to implement the output from print and deal with debug.
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
 '''
 
