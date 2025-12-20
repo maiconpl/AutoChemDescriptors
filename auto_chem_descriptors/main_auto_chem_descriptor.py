@@ -18,6 +18,7 @@ from get_descriptors_smiles import  get_descriptors_smiles
 
 from software_information_auto_chem_descriptors import software_information_auto_chem_descriptors
 
+from plot_dscribe import plot_dscribe
 from plot_pca_grouping import plot_pca_grouping
 from plot_pca_heatmap import plot_pca_heatmap
 from plot_pca_dispersion import plot_pca_dispersion
@@ -143,6 +144,9 @@ def main_auto_chem_descriptor(n_jobs,
     ## BEGIN: WRITING DESCRIPTORS ##
 
     ## BEGIN: ANALYSIS ##
+
+    if 'dscribe_plot' in analysis and descriptors_type != "SMILES":
+        plot_dscribe(descriptors_list, descriptors_type, analysis)
 
     if 'pca_grouping' in analysis:
         print("\nPCA grouping analysis:\n")
