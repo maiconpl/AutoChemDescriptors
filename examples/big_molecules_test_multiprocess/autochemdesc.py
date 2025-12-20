@@ -6,7 +6,6 @@ if __name__ == '__main__':
     #BEGIN INPUT
     # ----------
 
-
     is_debug_true = False
 
     n_jobs=2
@@ -36,20 +35,22 @@ if __name__ == '__main__':
                 ]
 
     calculator_controller = {
-    'is_force_field_true': False, # from RDKit, to get the pre-optimized XYZ.
+    #'is_force_field_true': False, # from RDKit, to get the pre-optimized XYZ.
+    'is_force_field_true': True, # from RDKit, to get the pre-optimized XYZ.
     'program': 'pyscf',
     'basis': 'sto-3g',
-    'maxsteps': 1,
-    #'maxsteps': 20,
+    #'maxsteps': 1,
+    'maxsteps': 30,
     }
 
     analysis = {}
 
     n_components=4
     analysis = {
+    "dscribe_plot": [True],
     "pca_grouping": [True, n_components],
 
-    "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y', 
+    "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',
                        'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'],
 
     "molecules_label": molecules_coded_list,
