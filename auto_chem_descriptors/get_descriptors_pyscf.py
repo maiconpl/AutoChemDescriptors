@@ -2,6 +2,7 @@
 Created on December 06, 2025
 
 @author: maicon
+Last modification by MPL: 24/12/2025 to save XYZ structures in a single file.)
 Last modification by MPL: 17/12/2025 to implement the view/output and deal with the debug."
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
 '''
@@ -12,7 +13,12 @@ from get_dscribe_descriptor import get_dscribe_descriptor
 from get_pyscf_calculations import get_pyscf_calculations
 
 from get_coordinates_from_smiles import get_coordinates_from_smiles
+from get_coordinates_from_xyz import get_coordinates_from_xyz
+
+from get_smiles_from_xyz import get_smiles_from_xyz
+
 from utils import smiles_checker
+from save_structures_in_file import save_structures_in_file
 
 descriptors = []
 
@@ -22,12 +28,30 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
     from get_atom_information import getAtomTypeCounter, getAtomType
     from rdkit.Chem import AllChem
 
-    mol_list = []
-    mol_list = smile_molecule_representation(n_molecules, molecules_coded_list, is_debug_true=True)
+    atoms_symbols_ordered_list = []
+    atoms_xyz_ordered_list = []
 
-    is_force_field_true = calculator_controller['is_force_field_true']
+    molecules_coded_from_xyz_list = []
 
-    atoms_to_be_optimized_string = get_coordinates_from_smiles(n_molecules, molecules_coded_list=mol_list, is_force_field_true=is_force_field_true)
+    if len(molecules_coded_list) > 0:
+
+       mol_list = []
+       mol_list = smile_molecule_representation(n_molecules, molecules_coded_list, is_debug_true=True)
+
+       is_force_field_true = calculator_controller['is_force_field_true']
+       atoms_to_be_optimized_string = get_coordinates_from_smiles(n_molecules, molecules_coded_list=mol_list, is_force_field_true=is_force_field_true)
+
+       print('atoms_to_be_optimized_string from pyscf:', atoms_to_be_optimized_string, len(atoms_to_be_optimized_string))
+
+    elif len(molecules_coded_list) == 0:
+
+        atoms_to_be_optimized_string = get_coordinates_from_xyz('input.xyz')
+
+        molecules_coded_from_xyz_list = get_smiles_from_xyz(atoms_to_be_optimized_string)
+
+        print('molecules_coded_from_xyz_list:', molecules_coded_from_xyz_list)
+
+        #print('atoms_to_be_optimized_string from xyz:', atoms_to_be_optimized_string, len(atoms_to_be_optimized_string))
 
     if is_debug_true == True:
        print("atoms_to_be_optimized_string:",  atoms_to_be_optimized_string)
@@ -36,6 +60,17 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
 
     if is_debug_true == True:
        print("xyz_new as list of strings:", xyz_new)
+
+    # get all atoms_symbols in a list (important to use the Dscribe to get the same descriptors size independent of the molecules)
+    all_atoms_symbols_list=[]
+    for iMol in range(len(xyz_new)):
+        for j in range(0, len(xyz_new[iMol]), 4):
+           all_atoms_symbols_list.append(xyz_new[iMol][j])
+
+    print('all_atoms_symbols_list:', all_atoms_symbols_list)
+
+    atomSymbolsOfAllMolecules = getAtomType(all_atoms_symbols_list)
+    print("atoms type global (list)", atomSymbolsOfAllMolecules)
 
     for iMol in range(len(xyz_new)):
 
@@ -75,9 +110,27 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
 
         print("atoms_type_counter and string:", atoms_type_counter, "".join(atoms_type_counter))
 
-        if descriptors_type == "MBTR":
-               descriptor = get_dscribe_descriptor(atoms_symbols_ordered, atoms_xyz_ordered, system_type="cluster", descriptor_type="mbtr")
+        if descriptors_type == "MBTR" or descriptors_type == 'SOAP':
+               descriptor = get_dscribe_descriptor(atoms_symbols_ordered,
+                                                   atomSymbolsOfAllMolecules,
+                                                   atoms_xyz_ordered,
+                                                   system_type="cluster",
+                                                   descriptor_type=descriptors_type.lower())
 
         descriptors.append(descriptor)
 
-    return descriptors
+        # Add the all ordered atoms_symbols and the atoms_xyz obtained from the above loop.
+
+        atoms_symbols_ordered_list.append(atoms_symbols_ordered)
+        atoms_xyz_ordered_list.append(atoms_xyz_ordered) 
+
+    # save xyz in a single file
+    if len(molecules_coded_list) > 0:
+       save_structures_in_file(atoms_symbols_ordered_list, atoms_xyz_ordered_list, smiles_list=molecules_coded_list)
+
+    elif len(molecules_coded_list) == 0:
+       n_molecules = len(molecules_coded_from_xyz_list)
+       smile_molecule_representation(n_molecules, molecules_coded_list=molecules_coded_from_xyz_list, is_debug_true=True)
+       save_structures_in_file(atoms_symbols_ordered_list, atoms_xyz_ordered_list, smiles_list=molecules_coded_from_xyz_list)
+
+    return descriptors, molecules_coded_from_xyz_list

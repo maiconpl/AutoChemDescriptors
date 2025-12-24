@@ -7,7 +7,6 @@ Last modification by MPL: 13/12/25 to handle smiles erro.
 Last modification by MPL: 07/12/25.
 '''
 
-#from rdkit import Chem
 from rdkit.Chem.Draw import MolToFile
 
 def smiles_checker(smiles_string):
@@ -60,14 +59,14 @@ def smile_molecule_representation(n_molecules, molecules_coded_list, is_debug_tr
         mol01 = None
 
         string01 = molecules_coded_list[iMain]
-        #print("string01:", string01)
+        print("string01:", string01)
    
         if is_debug_true == True:
            print(string01 + str(":"), smiles_checker(string01))
 
         mol01 = Chem.MolFromSmiles(string01)
 
-        if iMain <= 0 and iMain <=9:
+        if iMain < 10:
            MolToFile(mol01, "mol0" + str(iMain + 1) + ".png")
         else:
            MolToFile(mol01, "mol" + str(iMain + 1) + ".png")

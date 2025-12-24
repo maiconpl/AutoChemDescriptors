@@ -3,6 +3,7 @@
 Created on December 03, 2025
 
 @author: maicon & clayton
+Last modification by MPL: 24/12/2025 to import the structures from XYZ files.; )
 Last modification by MPL: 17/12/2025 to implement the analysis and debug.; )
 Last modification by MPL: 17/12/2025 to implement the output from print and deal with debug.
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
@@ -72,8 +73,12 @@ def main_auto_chem_descriptor(n_jobs,
     if descriptors_type == "SMILES":
        descriptors_list = get_descriptors_smiles(n_jobs, molecules_coded_list)#, is_debug_true)
 
-    if descriptors_type == "MBTR":
-       descriptors_list = get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true)
+    if descriptors_type == "MBTR" or descriptors_type == "SOAP":
+       descriptors_list, molecules_coded_from_xyz_list = get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true)
+
+       if len(molecules_coded_list) == 0: # in case of getting the smiles from xyz
+       # redefine analysis dicitionary
+          analysis['molecules_label'] = molecules_coded_from_xyz_list 
 
     print("descriptor:", descriptors_list)
 
@@ -111,7 +116,7 @@ def main_auto_chem_descriptor(n_jobs,
        print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
        print ("#", *descriptors_name_from_rdkit)
 
-    if descriptors_type == "MBTR":
+    if descriptors_type == "MBTR" or descriptors_type == "SOAP":
 
        file_write_txt_name = 'descriptors_from_' + str(descriptors_type) + '.txt'
        file_write_csv_name = 'descriptors_from_'+ str(descriptors_type) + '.csv'
@@ -126,10 +131,6 @@ def main_auto_chem_descriptor(n_jobs,
        file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_first_principles)  + "\n")
        csv_writer.writerow(descriptors_name_from_first_principles)
        print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
-
-    #file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_rdkit)  + "\n")
-    #csv_writer.writerow(descriptors_name_from_rdkit)
-    #print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
 
     for iPrint in descriptors_list:
         file_write_txt.write(" ".join(str(i) for i in iPrint)  + "\n")

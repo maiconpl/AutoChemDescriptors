@@ -3,6 +3,8 @@
 Created on December 18, 2025.
 
 @author: maicon & clayton
+Last modification by MPL: 24/12/2025 to print the dscriptors of different molecules sizes from xyz.
+Last modification by MPL: 23/12/2025 to print the dscriptors of different molecules sizes.
 Last modification by MPL: 18/12/2025.
 '''
 
@@ -24,10 +26,9 @@ def plot_dscribe(descriptors_list, descriptors_type, analysis, is_debug_true=Fal
     colors = analysis['molecules_color']
     labels = analysis['molecules_label']
 
-    counter_list = [i for i in range(len(X[0]))]
-
     for i in range(len(X)):
 
+        counter_list = [i for i in range(len(X[i]))]
         color = random.choice(colors)
 
         if is_debug_true == True:
