@@ -3,6 +3,7 @@
 Created on Februrary 10, 2020
 
 @author: maicon
+Last modification by MPL: 24/12/2025 (to get the Dscribe descriptor with the same vector size for different molecules).
 Last modification by MPL: 22/02/2024 (after installing Dscribe 2.1.x).
 Last modification by MPL: 17/09/2020.
 '''
@@ -15,15 +16,15 @@ from dscribe.descriptors import MBTR
 from dscribe.descriptors import SOAP
 from dscribe.descriptors import ACSF
 
-from get_atom_information import  getAtomType, getAtomTypeCounter
+from get_atom_information import getAtomTypeCounter
 
 import numpy as np
 
-def get_dscribe_descriptor(atomSymbols, atoms_xyz, system_type, descriptor_type):
+def get_dscribe_descriptor(atomSymbols, atomSymbolsOfAllMolecules, atoms_xyz, system_type, descriptor_type):
 
     print("into get_dscribe_descriptor atomSymbols:", atomSymbols)
+    print("into get_dscribe_descriptor atomSymbolsOfAllMolecules:", atomSymbolsOfAllMolecules)
     print("into get_dscribe_descriptor atoms_xyz:", atoms_xyz)
-    #self.atomSymbols = atomSymbols
 
     if system_type == "cluster":
 
@@ -62,7 +63,8 @@ def get_dscribe_descriptor(atomSymbols, atoms_xyz, system_type, descriptor_type)
 
     if descriptor_type == "mbtr":
 
-        atomsType = getAtomType(atomSymbols)
+        #atomsType = getAtomType(atomSymbols)
+        atomsType = atomSymbolsOfAllMolecules
         #print ("AtomsType and atomsSymbols", atomsType, atomSymbols)
 
         # Instantiating MBTR class in new Dscribe version: 2.1.x.
@@ -77,7 +79,8 @@ def get_dscribe_descriptor(atomSymbols, atoms_xyz, system_type, descriptor_type)
 
     if descriptor_type == "soap":
 
-        atomsType = self.getAtomType(atomSymbols)
+        #atomsType = getAtomType(atomSymbols)
+        atomsType = atomSymbolsOfAllMolecules
         #print ("AtomsType and atomsSymbols", atomsType, atomSymbols)
 
         cm = SOAP(
@@ -85,11 +88,14 @@ def get_dscribe_descriptor(atomSymbols, atoms_xyz, system_type, descriptor_type)
                 periodic=False, 
                 r_cut=5, 
                 n_max=8, 
-                l_max=6)
+                l_max=6,
+                average="inner",
+                sparse=False)
 
     if descriptor_type == "acsf":
 
-        atomsType = getAtomType(atomSymbols)
+        #atomsType = getAtomType(atomSymbols)
+        atomsType = atomSymbolsOfAllMolecules
 
         cm = ACSF(species=atomsType,
                    rcut=6.0,
@@ -101,13 +107,17 @@ def get_dscribe_descriptor(atomSymbols, atoms_xyz, system_type, descriptor_type)
     #   for i in range(len(atoms.get_positions())):
     #       print (atoms.get_chemical_symbols()[i], atoms.get_positions()[i])
 
+    ''' 24/12/25: we do not need it anymore.
     if descriptor_type == "soap":
        descriptor_list = np.ndarray.tolist( cm.create(atoms) )[0] # IMPORTANT
 
     else:
        descriptor_list = np.ndarray.tolist( cm.create(atoms) )
+    '''
 
     #if self.is_debug_true == True:
     #    print ("descriptor_list", descriptor_list)
+
+    descriptor_list = np.ndarray.tolist( cm.create(atoms) )
 
     return descriptor_list

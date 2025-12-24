@@ -1,7 +1,8 @@
 '''
 Created on December 03, 2025
 
-@author: maicon
+@author: maicon & clayton
+Last modification by MPL: 24/12/2025 to handle the Dscribe descriptor size for all and different molecules.
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
 '''
 
@@ -55,4 +56,5 @@ def getAtomTypeCounter(atomSymbols):
            tmp01.append(iAtomCounter)
 
     atom_type_counter_list = [str(i) + str(j) for i, j in zip(atomsType, tmp01)]
+
     return atom_type_counter_list
