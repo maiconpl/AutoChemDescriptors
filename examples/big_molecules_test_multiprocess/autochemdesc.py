@@ -6,7 +6,8 @@ if __name__ == '__main__':
     #BEGIN INPUT
     # ----------
 
-    is_debug_true = False
+    #is_debug_true = False
+    is_debug_true = True
 
     n_jobs=2
 
@@ -14,7 +15,8 @@ if __name__ == '__main__':
 
             #'molecular_encoding': "Selfies",
             'molecular_encoding': "SMILES",
-            'descriptors_type': "MBTR",
+            #'descriptors_type': "MBTR",
+            'descriptors_type': "SOAP",
             #'descriptors_type': "mbtr",
             #'descriptors_type': "SMILES",
     }
@@ -24,7 +26,7 @@ if __name__ == '__main__':
                  "c1(OCC(O)(=O))c(Cl)cc(Cl)cc1",
                  "c1(OCC(O)(=O))ccc(Cl)cc1(Cl)",
                  "c1(OCC(O)(=O))ccc(Cl)cc1(Cl)",
-                 #"c1ccc(Cl)cc1(Cl)",
+                 "c1ccc(Cl)cc1(Cl)",
                  #"c1ccc(Cl)cc1(Cl)",
                  #"CN1C=NC2=C1C(=O)N(C)C(=O)N2C", # cafein
                  #"CN1C=NC2=C1C(=O)N(C)C(=O)N2C", # cafein
@@ -35,12 +37,12 @@ if __name__ == '__main__':
                 ]
 
     calculator_controller = {
-    #'is_force_field_true': False, # from RDKit, to get the pre-optimized XYZ.
-    'is_force_field_true': True, # from RDKit, to get the pre-optimized XYZ.
+    'is_force_field_true': False, # from RDKit, to get the pre-optimized XYZ.
+    #'is_force_field_true': True, # from RDKit, to get the pre-optimized XYZ.
     'program': 'pyscf',
     'basis': 'sto-3g',
-    #'maxsteps': 1,
-    'maxsteps': 30,
+    'maxsteps': 3,
+    #'maxsteps': 30,
     }
 
     analysis = {}
