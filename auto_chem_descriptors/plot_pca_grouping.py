@@ -2,7 +2,8 @@
 '''
 Created on December 10, 2025.
 
-@author: maicon
+@author: maicon & clayton
+Last modification by MPL: 26/12/2025 to adjust the figure legend.
 Last modification by MPL: 10/12/2025.
 '''
 
@@ -49,7 +50,6 @@ def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
     n_samples = len(X)
     print("size X_pca:", len(X_pca), n_samples)
     
-    #markers = ['o', 's', '^', 'D', 'x', '+', '*', 'p', 'h', 'v', '<', '>']
     markers = ['o', 's', '^', 'D', '*', 'p', 'h', 'v', '<', '>', '*', '*', 'o']
 
     colors = ['k', 'b', 'g', 'r', 'c', 'm', 'y']
@@ -63,35 +63,40 @@ def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
         edgecolor = random.choice(edgecolors)
 
         plt.scatter(X_pca[i, 0], X_pca[i, 1], c=color, s=80, label=labels[i], marker=marker, edgecolors=edgecolor)
-        #if i <= 4:
-        #    plt.scatter(X_pca[i, 0], X_pca[i, 1], c=colors[i], s=80, label=labels[i])
-        ##if i > 4 and i < 11:
-        #if i > 4 and i < n_samples - 1:
-        #    plt.scatter(X_pca[i, 0], X_pca[i, 1], c=colors[i], s=80, label=labels[i], marker='^')
-        #if i == n_samples - 1:
-        #    #plt.scatter(X_pca[i, 0], X_pca[i, 1], c=colors[i], s=80, label=labels[i], marker=r'$\clubsuit$')
-        #    plt.scatter(X_pca[i, 0], X_pca[i, 1], c=colors[i], s=80, label=labels[i], marker='*')
 
-    #plt.legend(loc='upper center', prop={'size':9})
-    #plt.legend(loc='upper right', prop={'size':9})
-    #plt.legend(loc='upper right', prop={'size':7}, bbox_to_anchor=(1.2, 1.0))
-    lgd = plt.legend(loc='upper right', prop={'size':7}, bbox_to_anchor=(1.2, 1.0))
+    if "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+
+    #elif "legend_bbox_to_anchor" in analysis: # custom by user
+    elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" not in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol= 4 )
+
+    #elif "legend_size" in analysis: # custom by user
+    elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" not in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=4)
+
+    #elif "legend_ncol" in analysis: # custom by user
+    elif "legend_bbox_to_anchor" not in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+
+    #elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis: # custom by user
+    elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=4)
+
+    #elif "legend_bbox_to_anchor" in analysis and "legend_ncol" in analysis: # custom by user
+    elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+
+    #elif "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
+    elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
+        print("zoi")
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+ 
+    else: # default
+        lgd = plt.legend(loc='upper center', prop={'size':6}, bbox_to_anchor=(0.5, -0.16), fancybox=True, shadow=True, ncol=4)
 
     plt.axvline(x=0, color='k', linestyle="--")
     plt.axhline(y=0, color='k', linestyle="--")
-
-    '''
-    # BEGIN draw an elipse
-    a = -1.2
-    b = -1.4
-    h = -1.8
-    k = -1.2
-    x = np.linspace(-3.3, 3.0, 400)
-    y = np.linspace(-3.3, 3.0, 400)
-    x, y = np.meshgrid(x, y)
-    plt.contour(x, y,((x -h)**2/a**2 + (y - k)**2/b**2), [1], colors='k')
-    # END draw an elipse
-    '''
 
     plt.savefig('plot_PCA_grouping.png',  bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
     plt.close()

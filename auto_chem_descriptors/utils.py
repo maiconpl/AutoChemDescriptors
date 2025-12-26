@@ -3,6 +3,7 @@
 Created on December 6, 2025
 
 @author: maicon
+Last modification by MPL: 26/12/25 to handle to have the 'mol10' and not the 'mol010'.
 Last modification by MPL: 13/12/25 to handle smiles erro.
 Last modification by MPL: 07/12/25.
 '''
@@ -66,7 +67,7 @@ def smile_molecule_representation(n_molecules, molecules_coded_list, is_debug_tr
 
         mol01 = Chem.MolFromSmiles(string01)
 
-        if iMain < 10:
+        if iMain < 9:
            MolToFile(mol01, "mol0" + str(iMain + 1) + ".png")
         else:
            MolToFile(mol01, "mol" + str(iMain + 1) + ".png")

@@ -39,7 +39,7 @@ def main_auto_chem_descriptor(n_jobs,
     software_information_auto_chem_descriptors()
 
     print("--------------------------")
-    print("------ BEGIN OUTPUT -------")
+    print("------ BEGIN OUTPUT ------")
     print("--------------------------\n")
 
     print("Begin input prints:")

@@ -2,7 +2,8 @@
 '''
 Created on December 10, 2025.
 
-@author: maicon
+@author: maicon & clayton
+Last modification by MPL: 26/12/2025 to adjust the figure legend.
 Last modification by MPL: 10/12/2025.
 '''
 
@@ -19,7 +20,6 @@ def myplot(score, coeff, labels, X_pca, analysis):
 
     import random
     random.seed(42)
-#def myplot(score,coeff,labels=labels):
 
     markers = ['o', 's', '^', 'D', '*', 'p', 'h', 'v', '<', '>', '*', '*', 'o']
     colors = ['k', 'b', 'g', 'r', 'c', 'm', 'y']
@@ -33,19 +33,15 @@ def myplot(score, coeff, labels, X_pca, analysis):
 
     scalex = 1.0/(xs.max() - xs.min())
     scaley = 1.0/(ys.max() - ys.min())
-    #plt.scatter(xs * scalex,ys * scaley, c = y, s=60)
 
     molecules_label = analysis['molecules_label']
 
-    #for i in range( len(X_pca[:,0]) ):
     for i in range( len(xs)):
 
         marker = random.choice(markers)
         color = random.choice(colors)
         edgecolor = random.choice(edgecolors)
 
-        #plt.scatter(xs * scalex,ys * scaley, c = y, s=60)
-        #plt.scatter(X_pca[i, 0], X_pca[i, 1], c=color, s=80, label=molecules_label[i], marker=marker, edgecolors=edgecolor)
         plt.scatter(xs[i] * scalex, ys[i] * scaley, c=color, s=80, label=molecules_label[i], marker=marker, edgecolors=edgecolor)
 
     for i in range(n):
@@ -74,12 +70,6 @@ def plot_pca_dispersion(descriptors_list, analysis):
 
     labels = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03", "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge", "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons", "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt"]
 
-    #plt.xlim(-1,1)
-    #plt.ylim(-1,1)
-    #plt.xlim(-0.71,0.71)
-    #plt.ylim(-0.71,0.71)
-    #plt.xlabel("Component {}".format(1), size=15)
-    #plt.ylabel("Component {}".format(2), size=15)
     plt.xlabel("F1 (" + str( round(float(pca.explained_variance_ratio_[0]*100), 2) ) + " %)", size=15)
     plt.ylabel("F2 (" + str( round(float(pca.explained_variance_ratio_[1]*100), 2) ) + " %)", size=15)
     plt.grid()
@@ -87,11 +77,33 @@ def plot_pca_dispersion(descriptors_list, analysis):
     #Call the function. Use only the 2 PCs.
     myplot(X_pca[:,0:2], np.transpose(pca.components_[0:2, :]), labels, X_pca, analysis)
 
-    lgd = plt.legend(loc='upper right', prop={'size':6}, bbox_to_anchor=(1.27, 1.0))
+    if "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+
+    elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" not in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol= 4 )
+
+    elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" not in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=4)
+
+    elif "legend_bbox_to_anchor" not in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+
+    elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=4)
+
+    elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
+        lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+
+    elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
+        print("zoi")
+        lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
+ 
+    else: # default
+        lgd = plt.legend(loc='upper center', prop={'size':6}, bbox_to_anchor=(0.5, -0.16), fancybox=True, shadow=True, ncol=4)
 
     plt.axvline(x=0, color='k', linestyle="--")
     plt.axhline(y=0, color='k', linestyle="--")
 
-    #plt.savefig('plot_PCA_dispersion.png', bbox_inches='tight', dpi=300)
     plt.savefig('plot_PCA_dispersion.png', bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
     plt.close()

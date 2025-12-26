@@ -3,6 +3,8 @@ Created on December 22, 2025
 
 @author: maicon & clayton
 Last modification by MPL: 23/12/2025 to save XYZ structures in a single file.)
+https://github.com/rdkit/rdkit/discussions/7918 (about Chem.MolFromXYZFile since, from
+our example it was not providing the proper SMILES from XYZ coordinates.)
 '''
 
 from rdkit import Chem
@@ -21,6 +23,8 @@ def get_smiles_from_xyz(atoms_string):
 
     tmp_string = ""
     for i in range(n_molecules):
+
+        raw_mol = None
 
         if i > 9:
            tmp_file_name = "tmp_file_" + str(i) + ".xyz"
