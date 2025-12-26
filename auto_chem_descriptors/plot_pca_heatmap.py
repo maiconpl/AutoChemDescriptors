@@ -2,7 +2,8 @@
 '''
 Created on December 10, 2025.
 
-@author: maicon
+@author: maicon & clayton
+Last modification by MPL: 26/12/2025 to adjust the figure legend.
 Last modification by MPL: 10/12/2025.
 '''
 
@@ -37,13 +38,19 @@ def plot_pca_heatmap(descriptors_list, analysis):
 
     features_index = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03", "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge", "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons", "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt"]
 
-    plt.matshow(pca.components_, cmap='viridis')
-    plt.yticks([0, 1, 2], ["First component", "Second component", "Third component"], size=12)
-    #plt.yticks([0, 1], ["First component", "Second component"], size=11)
+    n_components = analysis['pca_grouping'][1]
+    components_name_list = []
+    tmp_string = "Comp."
+    for i in range(n_components):
+        components_name_list.append(tmp_string + " " + str(i + 1))
+
+
+    #plt.matshow(pca.components_, cmap='viridis')
+    plt.matshow(pca.components_[0:n_components], cmap='viridis')
+    plt.yticks([i for i in range(n_components)], components_name_list, size=10)
+    #plt.yticks([0, 1, 2], ["First component", "Second component", "Third component"], size=12)
     plt.colorbar()
-    plt.xticks(range(0,len(X[0])), features_index, rotation=18, ha='left', size=12)
-    #plt.xlabel("Features", size=15)
-    #plt.ylabel("Principal Components", size=15)
+    plt.xticks(range(0,len(X[0])), features_index, rotation=18, ha='left', size=10)
 
     plt.savefig('plot_PCA_heatmap.png', bbox_inches='tight', dpi=300)
 
@@ -51,6 +58,7 @@ def plot_pca_heatmap(descriptors_list, analysis):
                                                   pca.explained_variance_ratio_,
                                                   features_index,
                                                   analysis)
+
     print("PCA heatmap report saved to:", report_filename)
 
     plt.close()
