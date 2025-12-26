@@ -10,7 +10,7 @@ def software_information_auto_chem_descriptors():
     print ("\n---------------------------------------------------------------------------------------------------------------")
     print ("---------------------------------------------------------------------------------------------------------------")
     print (" AutoChemDescriptors: Automated Chemical Descriptor Builder for Machine Learning.")
-    print (" Version 0.0.6, 28/12/2025, to read the XYZ of the structures (prsenent in a single file), create the Dscribe descriptors for different molecules, test and debug.")
+    print (" Version 0.0.6, 28/12/2025, to read the XYZ of the structures (presenented in a single file), create the Dscribe descriptors for different molecules, test and debug.")
    # print ("Version 0.0.5, 25/12/2025, to read the XYZ of the structures (prsenent in a single file) and create the Dscribe descriptors for different molecules.")
     #print (" Version 0.0.4, 18/12/2025, to adapt to multiprocessing in Python3.x and manage the view.")
     print (" It was developed by Maicon P. Lourenco (MPL) and Clayton Filho (at GAMIAC group at UFES) and collaborators from University of Calgary.")
