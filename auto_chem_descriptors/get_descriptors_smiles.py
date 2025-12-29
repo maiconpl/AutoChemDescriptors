@@ -23,7 +23,6 @@ def get_descriptors_smiles(n_jobs, molecules_coded_list, is_debug_true=True):
     # Here, we are using this just to get the "molX.png" files.
     smile_molecule_representation(n_molecules=len(molecules_coded_list), molecules_coded_list=molecules_coded_list, is_debug_true=is_debug_true)
 
-    #print("asdf: ", get_rdkit_calculations(molecules_coded_list, n_jobs=n_jobs) )
     descriptors = get_rdkit_calculations(molecules_coded_list, n_jobs=n_jobs)
 
     print("xyz_new from mull:", descriptors)

@@ -2,6 +2,7 @@
 Created on December 06, 2025
 
 @author: maicon
+Last modification by MPL: 28/12/2025 to get the properties as descriptors (i.e. HOMO, LUMO, band-gap, electronegativity, hardness, xyz dipole moment) from PySCF calculations.)
 Last modification by MPL: 24/12/2025 to save XYZ structures in a single file.)
 Last modification by MPL: 17/12/2025 to implement the view/output and deal with the debug."
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
@@ -30,6 +31,8 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
 
     atoms_symbols_ordered_list = []
     atoms_xyz_ordered_list = []
+    qc_descriptors_list = []
+    xyz_new = []
 
     molecules_coded_from_xyz_list = []
 
@@ -56,7 +59,21 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
     if is_debug_true == True:
        print("atoms_to_be_optimized_string:",  atoms_to_be_optimized_string)
 
-    xyz_new = get_pyscf_calculations(atoms_to_be_optimized_string, calculator_controller, n_jobs=n_jobs)
+    if descriptors_type == "QC":
+        xyz_new_and_qc_descriptors_tuple = get_pyscf_calculations(atoms_to_be_optimized_string, calculator_controller, n_jobs=n_jobs)
+
+        print("xyz_new_and_qc_descriptors_tuple:", xyz_new_and_qc_descriptors_tuple)
+
+        for iMolecule in range(len(xyz_new_and_qc_descriptors_tuple)):
+            xyz_new.append(xyz_new_and_qc_descriptors_tuple[iMolecule][0])
+            qc_descriptors_list.append( xyz_new_and_qc_descriptors_tuple[iMolecule][1])
+
+        if is_debug_true == True:
+           print("qc_descriptors_list from QC:", qc_descriptors_list)
+           print("xyz_new as list of strings from QC:", xyz_new)
+
+    elif descriptors_type == "MBTR" or descriptors_type == "SOAP":
+        xyz_new = get_pyscf_calculations(atoms_to_be_optimized_string, calculator_controller, n_jobs=n_jobs)
 
     if is_debug_true == True:
        print("xyz_new as list of strings:", xyz_new)
@@ -89,14 +106,13 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
                atoms_xyz_tmp01.append(float(iCoordinates))
            atoms_xyz.append(atoms_xyz_tmp01)
            atoms_xyz_tmp01 = []
-           print( )
 
         if is_debug_true == True:
            print("atoms_to_be_optimized_string (final):", atoms_to_be_optimized_string)
            print("atoms_xyz list of floats:", atoms_xyz)
            print("atoms_symbols:", atoms_symbols)
 
-        print ("number of atoms type (list):", getAtomTypeCounter(atoms_symbols))
+        print ("\nnumber of atoms type (list):", getAtomTypeCounter(atoms_symbols))
         print ("atoms type (list)", getAtomType(atoms_symbols))
 
         atoms_type = getAtomType(atoms_symbols)
@@ -116,6 +132,9 @@ def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors
                                                    atoms_xyz_ordered,
                                                    system_type="cluster",
                                                    descriptor_type=descriptors_type.lower())
+
+        if descriptors_type == "QC":
+               descriptor = qc_descriptors_list[iMol]
 
         descriptors.append(descriptor)
 
