@@ -36,18 +36,6 @@ if __name__ == '__main__':
                  "COc1ccccc1OCC(=O)Nc1ccccc1F",
                  "COc1ccccc1OCC(=O)Nc1cccc(F)c1",
                  "COc1ccccc1OCC(=O)Nc1ccc(F)cc1",
-                 "COc1ccccc1OCC(=O)Nc1ccccc1Cl",
-                 "COc1ccccc1OCC(=O)Nc1cccc(Cl)c1",
-                 "COc1ccccc1OCC(=O)Nc1ccc(Cl)cc1",
-                 "COc1ccccc1OCC(=O)Nc1ccccc1Br",
-                 "COc1ccccc1OCC(=O)Nc1cccc(Br)c1",
-                 "COc1ccccc1OCC(=O)Nc1ccc(Br)cc1",
-                 "COc1ccccc1OCC(=O)Nc1ccccc1[N+](=O)[O-]",
-                 "COc1ccccc1OCC(=O)Nc1cccc([N+](=O)[O-])c1",
-                 "COc1ccccc1OCC(=O)Nc1ccc([N+](=O)[O-])cc1",
-                 "COc1ccccc1OCC(=O)Nc1ccccc1C",
-                 "COc1ccccc1OCC(=O)Nc1cccc(C)c1",
-                 "COc1ccccc1OCC(=O)Nc1cccc(C)c1",
                  "COc1ccccc1OCC(=O)Nc1cccc2ccccc12",
                 ]
 
@@ -65,12 +53,8 @@ if __name__ == '__main__':
                             'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'],
 
         "molecules_label": [
-          'Guaiacol', 'GACO1', 'GAO00',
-          'GAA21', 'GAA31', 'GAA41',
-          'GAA22', 'GAA32', 'GAA42',
-          'GAA23', 'GAA33', 'GAA43',
-          'GAA24', 'GAA34', 'GAA44',
-          'GAA25', 'GAA35', 'GAA45', 'GANT']
+          'Guaiacol', 'GACO1', 'GAO00', 'GAA21',
+          'GAA31', 'GAA41', 'GAA22']
      }
 
     main_auto_chem_descriptor(n_jobs,
@@ -98,4 +82,4 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - **Console logs** register library versions and execution timestamps for reproducibility.
 
 ## Support and citation
-AutoChemDescriptors was created by Maicon P. Lourenço (GAMIAC). Cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
+AutoChemDescriptors was created by Maicon P. Lourenço and Clayton V. F. Filho (from GAMIAC research group at the Federal University of Espírito Santo, in Alegre, Brazil). This research is done in collaboration with Dennis R. Salahub (University of Calgary) and Jiri Hostas (NRC Canada). Please, cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
