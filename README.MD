@@ -9,7 +9,7 @@ From a chemist’s standpoint, AutoChemDescriptors is the missing bridge between
 - (4) molecular structures from XYZ can be used as input in order to obtain MBTR, SOAP and QC descriptors.
 - (5) Scale calculations across as many processes (`n_jobs`) as your workstation allows, accelerating quantum chemistry calculations (i.e. PySCF) by parallelism.
 - (6) Obtain unsupervised mahcine learning -- i.e. PCA-based grouping, heatmap, and biplot -- visualizations immediately after descriptor generation.
-- (7() Keep audit-ready records (molecule depictions, XYZ snapshots, software versions, execution times) for reproducibility and reporting.
+- (7) Keep audit-ready records (molecule depictions, XYZ snapshots, software versions, execution times) for reproducibility and reporting.
 
 ## Before you begin
 1. Set up a Python 3 environment and install the packages listed in `requirements.txt` (RDKit, PySCF, DScribe, ASE, NumPy, SciPy, Matplotlib, scikit-learn, Torch, PyBERNY).
