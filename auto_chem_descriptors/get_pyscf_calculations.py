@@ -2,6 +2,7 @@
 Created on December 07, 2025
 
 @author: maicon
+Last modification by MPL: 28/12/2025 to implement the properties from the optimized geometry: total energy, HOMO, LUMO, band-gap, electronegativiy, hardness and dipole moment.
 Last modification by MPL: 08/12/2025 to implement another argument in pyscf_calculations using multiprocessing. 
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
 '''
@@ -37,7 +38,12 @@ def get_pyscf_calculations(atoms_to_be_optimized_string, calculator_controller, 
             #results = p.map(run_pyscf_calc, mol_definitions)
          #results = p.map(pyscf_calculator, atoms_to_be_optimized_string)
          #results = p.starmap(partial_pyscf_calculator, atoms_to_be_optimized_string)
-         results = p.starmap(partial_pyscf_calculator, atoms_to_be_optimized_string_list_of_tuples)
- 
-    return results
-    #xyz_new = pyscf_calculator(atoms_to_be_optimized_string, maxsteps)
+
+         if calculator_controller["properties"] == False:
+            results = p.starmap(partial_pyscf_calculator, atoms_to_be_optimized_string_list_of_tuples)
+            return results
+
+         elif calculator_controller["properties"] == True:
+            list_of_results = []
+            list_of_results = p.starmap(partial_pyscf_calculator, atoms_to_be_optimized_string_list_of_tuples)
+            return list_of_results

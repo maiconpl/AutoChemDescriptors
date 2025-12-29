@@ -3,6 +3,7 @@
 Created on December 03, 2025
 
 @author: maicon & clayton
+Last modification by MPL: 28/12/2025 to implement the properties from the optimized geometry: total energy, HOMO, LUMO, band-gap, electronegativiy, hardness and dipole moment.
 Last modification by MPL: 24/12/2025 to import the structures from XYZ files.; )
 Last modification by MPL: 17/12/2025 to implement the analysis and debug.; )
 Last modification by MPL: 17/12/2025 to implement the output from print and deal with debug.
@@ -45,7 +46,12 @@ def main_auto_chem_descriptor(n_jobs,
     print("Begin input prints:")
     print("input_flow_controller:", input_flow_controller)
     print("molecules_coded_list:", molecules_coded_list)
-    print("calculator_controlle:", calculator_controller)
+
+    if len(calculator_controller) > 0:
+       calculator_controller['properties'] = False # "if only if: descriptors_type != 'QC'"
+
+    print("calculator_controller:", calculator_controller)
+
     print("analysis:", analysis)
     print("End input prints.")
 
@@ -74,6 +80,16 @@ def main_auto_chem_descriptor(n_jobs,
        descriptors_list = get_descriptors_smiles(n_jobs, molecules_coded_list)#, is_debug_true)
 
     if descriptors_type == "MBTR" or descriptors_type == "SOAP":
+       descriptors_list, molecules_coded_from_xyz_list = get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true)
+
+       if len(molecules_coded_list) == 0: # in case of getting the smiles from xyz
+       # redefine analysis dicitionary
+          analysis['molecules_label'] = molecules_coded_from_xyz_list 
+
+    if descriptors_type == "QC": # from quantum chemistry (QC) calculations.
+
+       calculator_controller['properties'] = True # "if only if: descriptors_type == 'QC'"
+
        descriptors_list, molecules_coded_from_xyz_list = get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true)
 
        if len(molecules_coded_list) == 0: # in case of getting the smiles from xyz
@@ -131,6 +147,35 @@ def main_auto_chem_descriptor(n_jobs,
        file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_first_principles)  + "\n")
        csv_writer.writerow(descriptors_name_from_first_principles)
        print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
+
+
+    if descriptors_type == "QC":
+
+       file_write_txt_name = 'descriptors_from_' + str(descriptors_type) + '.txt'
+       file_write_csv_name = 'descriptors_from_'+ str(descriptors_type) + '.csv'
+
+       file_write_txt = open(file_write_txt_name, 'w')
+       file_write_csv = open(file_write_csv_name, mode='w', newline='')
+       csv_writer = csv.writer(file_write_csv)
+
+       descriptors_name_from_rdkit = [
+            "TotalEnergy-Ha.",
+            "HOMO-Ha.",
+            "LUMO-Ha.",
+            "LUMO (Hartree)",
+            "BAND-GAP-Ha.",
+            "Electronegativity-Ha.",
+            "Hardness-Ha.",
+            "DipoleMomentX-Debye",
+            "DipoleMomentY-Debye",
+            "DipoleMomentZ-Debye",
+       ]
+
+       # write header
+       file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_rdkit)  + "\n")
+       csv_writer.writerow(descriptors_name_from_rdkit)
+       print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
+       print ("#", *descriptors_name_from_rdkit)
 
     for iPrint in descriptors_list:
         file_write_txt.write(" ".join(str(i) for i in iPrint)  + "\n")
