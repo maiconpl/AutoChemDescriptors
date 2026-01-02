@@ -25,6 +25,7 @@ from plot_pca_grouping import plot_pca_grouping
 from plot_pca_heatmap import plot_pca_heatmap
 from plot_pca_dispersion import plot_pca_dispersion
 from kmeans_analysis import run_kmeans_analysis
+from dbscan_analysis import run_dbscan_analysis
 import csv
 
 def main_auto_chem_descriptor(n_jobs,
@@ -210,6 +211,10 @@ def main_auto_chem_descriptor(n_jobs,
     if 'kmeans' in analysis:
         print("\nK-Means clustering analysis:\n")
         run_kmeans_analysis(descriptors_list, analysis)
+
+    if 'dbscan' in analysis:
+        print("\nDBSCAN clustering analysis:\n")
+        run_dbscan_analysis(descriptors_list, analysis)
 
     ## END: ANALYSIS ##
 
