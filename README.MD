@@ -6,6 +6,7 @@ From a chemist’s standpoint, AutoChemDescriptors is the missing bridge between
 - Generate RDKit-based descriptors directly from SMILES or invoke PySCF + DScribe to obtain MBTR descriptors informed by electronic-structure optimization.
 - Scale calculations across as many processes (`n_jobs`) as your workstation allows, accelerating large virtual libraries.
 - Obtain PCA-based grouping, heatmap, and biplot visualizations immediately after descriptor generation.
+- Run a dedicated K-Means clustering pipeline with elbow/silhouette diagnostics and PCA-based scatter plots for exploratory grouping.
 - Keep audit-ready records (molecule depictions, XYZ snapshots, software versions, execution times) for reproducibility and reporting.
 
 ## Before you begin
@@ -49,6 +50,14 @@ if __name__ == '__main__':
         "pca_grouping": [True, n_components],
         "pca_dispersion": [True, n_components],
 
+        "kmeans": {
+            "k_min": 2,
+            "k_max": 8,
+            "random_state": 42,
+            "use_minibatch": False,
+            "projection_components": 2
+        },
+
         "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',
                             'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'],
 
@@ -79,6 +88,7 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - **Descriptor arrays** (RDKit or MBTR) can be consumed by clustering, QSAR, or active-learning pipelines.
 - **Molecule images and XYZ snapshots** help trace any data point back to its structure or geometry optimization stage.
 - **PCA figures** visualize grouping tendencies, feature importances, and dominant directions of variance, providing immediate insight into the sampled chemical space.
+- **K-Means artifacts** (`plot_kmeans_elbow.png`, `plot_kmeans_silhouette.png`, `plot_kmeans_clusters.png`) complement PCA outputs with partitioning diagnostics and cluster assignments derived from the descriptor matrix.
 - **Console logs** register library versions and execution timestamps for reproducibility.
 
 ## Support and citation
