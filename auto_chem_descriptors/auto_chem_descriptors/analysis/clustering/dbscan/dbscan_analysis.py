@@ -17,7 +17,7 @@ from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
-from dbscan_report import generate_dbscan_report
+from .dbscan_report import generate_dbscan_report
 
 import matplotlib
 matplotlib.use('Agg')

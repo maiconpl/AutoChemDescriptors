@@ -1,4 +1,4 @@
-from main_auto_chem_descriptor import main_auto_chem_descriptor
+from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
 
 if __name__ == '__main__':
 

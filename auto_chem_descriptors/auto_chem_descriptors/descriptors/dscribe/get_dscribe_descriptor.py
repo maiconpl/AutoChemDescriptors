@@ -16,7 +16,7 @@ from dscribe.descriptors import MBTR
 from dscribe.descriptors import SOAP
 from dscribe.descriptors import ACSF
 
-from get_atom_information import getAtomTypeCounter
+from ..io.get_atom_information import getAtomTypeCounter
 
 import numpy as np
 

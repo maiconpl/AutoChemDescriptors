@@ -16,7 +16,7 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score, silhouette_samples
 from sklearn.preprocessing import StandardScaler
 
-from kmeans_report import generate_kmeans_report
+from .kmeans_report import generate_kmeans_report
 
 # Otherwise, does not work, it is mandatory:
 import matplotlib

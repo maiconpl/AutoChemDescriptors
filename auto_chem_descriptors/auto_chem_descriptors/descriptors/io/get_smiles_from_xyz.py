@@ -10,7 +10,7 @@ our example it was not providing the proper SMILES from XYZ coordinates.)
 from rdkit import Chem
 from rdkit.Chem import rdDetermineBonds
 import os
-from utils import smiles_checker
+from ...utils import smiles_checker
 
 def get_smiles_from_xyz(atoms_string):
 

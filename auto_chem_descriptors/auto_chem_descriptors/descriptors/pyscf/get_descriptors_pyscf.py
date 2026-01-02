@@ -8,25 +8,25 @@ Last modification by MPL: 17/12/2025 to implement the view/output and deal with 
 Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
 '''
 
-from utils import get_coordinates_ordered_by_atoms_group, smile_molecule_representation
-from get_dscribe_descriptor import get_dscribe_descriptor
+from ...utils import get_coordinates_ordered_by_atoms_group, smile_molecule_representation
+from ..dscribe.get_dscribe_descriptor import get_dscribe_descriptor
 
-from get_pyscf_calculations import get_pyscf_calculations
+from .get_pyscf_calculations import get_pyscf_calculations
 
-from get_coordinates_from_smiles import get_coordinates_from_smiles
-from get_coordinates_from_xyz import get_coordinates_from_xyz
+from ..io.get_coordinates_from_smiles import get_coordinates_from_smiles
+from ..io.get_coordinates_from_xyz import get_coordinates_from_xyz
 
-from get_smiles_from_xyz import get_smiles_from_xyz
+from ..io.get_smiles_from_xyz import get_smiles_from_xyz
 
-from utils import smiles_checker
-from save_structures_in_file import save_structures_in_file
+from ...utils import smiles_checker
+from ..io.save_structures_in_file import save_structures_in_file
 
 descriptors = []
 
 def get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true):
 
     from rdkit import Chem
-    from get_atom_information import getAtomTypeCounter, getAtomType
+    from ..io.get_atom_information import getAtomTypeCounter, getAtomType
     from rdkit.Chem import AllChem
 
     atoms_symbols_ordered_list = []
