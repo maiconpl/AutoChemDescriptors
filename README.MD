@@ -6,7 +6,7 @@ From a chemist’s standpoint, AutoChemDescriptors is the missing bridge between
 - Generate RDKit-based descriptors directly from SMILES or invoke PySCF + DScribe to obtain MBTR descriptors informed by electronic-structure optimization.
 - Scale calculations across as many processes (`n_jobs`) as your workstation allows, accelerating large virtual libraries.
 - Obtain PCA-based grouping, heatmap, and biplot visualizations immediately after descriptor generation.
-- Run a dedicated K-Means clustering pipeline with elbow/silhouette diagnostics and PCA-based scatter plots for exploratory grouping.
+- Run a dedicated K-Means clustering pipeline with elbow/silhouette diagnostics, PCA-based scatter plots, and export-ready reports (Markdown + CSV/JSON) for exploratory grouping.
 - Keep audit-ready records (molecule depictions, XYZ snapshots, software versions, execution times) for reproducibility and reporting.
 
 ## Before you begin
@@ -58,6 +58,13 @@ if __name__ == '__main__':
             "projection_components": 2
         },
 
+        "kmeans_report": {
+            "report_filename": "report_kmeans.md",
+            "metrics_filename": "kmeans_metrics.csv",
+            "suggestions_filename": "kmeans_suggestions.json",
+            "labels_filename": "kmeans_cluster_labels.csv"
+        },
+
         "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',
                             'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'],
 
@@ -88,8 +95,13 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - **Descriptor arrays** (RDKit or MBTR) can be consumed by clustering, QSAR, or active-learning pipelines.
 - **Molecule images and XYZ snapshots** help trace any data point back to its structure or geometry optimization stage.
 - **PCA figures** visualize grouping tendencies, feature importances, and dominant directions of variance, providing immediate insight into the sampled chemical space.
-- **K-Means artifacts** (`plot_kmeans_elbow.png`, `plot_kmeans_silhouette.png`, `plot_kmeans_clusters.png`) complement PCA outputs with partitioning diagnostics and cluster assignments derived from the descriptor matrix.
+- **K-Means artifacts/reports** (`plot_kmeans_elbow.png`, `plot_kmeans_silhouette.png`, `plot_kmeans_clusters.png`, `report_kmeans.md`, `kmeans_metrics.csv`, `kmeans_cluster_labels.csv`, `kmeans_suggestions.json`) complement PCA outputs with partitioning diagnostics, adopted K rationale, and per-sample metadata.
 - **Console logs** register library versions and execution timestamps for reproducibility.
+
+## Configuring K-Means reports
+- Reports are generated automatically when `analysis["kmeans"]` is enabled. Customize filenames or integrate with downstream tools by providing an optional `analysis["kmeans_report"]` dictionary (defaults shown in the run-script example).
+- The Markdown file (`report_kmeans.md`) summarizes dataset size, estimator settings, suggested K values, cluster balance, and low-silhouette alerts.
+- CSV/JSON sidecars (`kmeans_metrics.csv`, `kmeans_cluster_labels.csv`, `kmeans_suggestions.json`) expose the numeric diagnostics (per-K inertia/silhouette/runtimes, per-sample cluster assignments, and elbow/silhouette recommendations) for further analytics pipelines.
 
 ## Support and citation
 AutoChemDescriptors was created by Maicon P. Lourenço and Clayton V. F. Filho (from GAMIAC research group at the Federal University of Espírito Santo, in Alegre, Brazil). This research is done in collaboration with Dennis R. Salahub (University of Calgary) and Jiri Hostas (NRC Canada). Please, cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
