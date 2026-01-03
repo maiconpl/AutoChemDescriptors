@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
-from pca_heatmap_report import generate_pca_heatmap_report
+from .pca_heatmap_report import generate_pca_heatmap_report
 
 # Otherwise, does not work, it is mandatory:
 import matplotlib

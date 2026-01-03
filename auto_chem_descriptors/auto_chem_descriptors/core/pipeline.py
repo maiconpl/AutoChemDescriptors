@@ -15,15 +15,17 @@ from datetime import datetime
 # Initial time:
 t0 = datetime.now()
 
-from get_descriptors_pyscf import  get_descriptors_pyscf
-from get_descriptors_smiles import  get_descriptors_smiles
+from ..descriptors.pyscf.get_descriptors_pyscf import get_descriptors_pyscf
+from ..descriptors.rdkit.get_descriptors_smiles import get_descriptors_smiles
 
-from software_information_auto_chem_descriptors import software_information_auto_chem_descriptors
+from ..metadata.software_information_auto_chem_descriptors import software_information_auto_chem_descriptors
 
-from plot_dscribe import plot_dscribe
-from plot_pca_grouping import plot_pca_grouping
-from plot_pca_heatmap import plot_pca_heatmap
-from plot_pca_dispersion import plot_pca_dispersion
+from ..visualization.plot_dscribe import plot_dscribe
+from ..analysis.pca.plot_pca_grouping import plot_pca_grouping
+from ..analysis.pca.plot_pca_heatmap import plot_pca_heatmap
+from ..analysis.pca.plot_pca_dispersion import plot_pca_dispersion
+from ..analysis.clustering.kmeans.kmeans_analysis import run_kmeans_analysis
+from ..analysis.clustering.dbscan.dbscan_analysis import run_dbscan_analysis
 import csv
 
 def main_auto_chem_descriptor(n_jobs,
@@ -206,6 +208,14 @@ def main_auto_chem_descriptor(n_jobs,
         print("\nPCA dispersion:\n")
         plot_pca_dispersion(descriptors_list, analysis)
 
+    if 'kmeans' in analysis:
+        print("\nK-Means clustering analysis:\n")
+        run_kmeans_analysis(descriptors_list, analysis)
+
+    if 'dbscan' in analysis:
+        print("\nDBSCAN clustering analysis:\n")
+        run_dbscan_analysis(descriptors_list, analysis)
+
     ## END: ANALYSIS ##
 
     print("\n------------------------")
@@ -217,7 +227,7 @@ def main_auto_chem_descriptor(n_jobs,
     ######################
 
     # Main libraries version:
-    from libraries_information_auto_chem_descriptors import libraries_information_auto_chem_descriptors
+    from ..metadata.libraries_information_auto_chem_descriptors import libraries_information_auto_chem_descriptors
     libraries_information_auto_chem_descriptors()
 
     # Measuring the execution time

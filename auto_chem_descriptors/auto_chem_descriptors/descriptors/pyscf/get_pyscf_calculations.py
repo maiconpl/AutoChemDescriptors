@@ -9,7 +9,7 @@ Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF 
 
 from multiprocessing import Pool
 from functools import partial
-from pyscf_calculator import pyscf_calculator
+from .pyscf_calculator import pyscf_calculator
 
 def get_pyscf_calculations(atoms_to_be_optimized_string, calculator_controller, n_jobs):
 
