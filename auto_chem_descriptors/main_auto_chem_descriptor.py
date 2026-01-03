@@ -24,6 +24,7 @@ from plot_dscribe import plot_dscribe
 from plot_pca_grouping import plot_pca_grouping
 from plot_pca_heatmap import plot_pca_heatmap
 from plot_pca_dispersion import plot_pca_dispersion
+from kmeans_analysis import run_kmeans_analysis
 import csv
 
 def main_auto_chem_descriptor(n_jobs,
@@ -205,6 +206,10 @@ def main_auto_chem_descriptor(n_jobs,
     if 'pca_dispersion' in analysis and descriptors_type == "SMILES":
         print("\nPCA dispersion:\n")
         plot_pca_dispersion(descriptors_list, analysis)
+
+    if 'kmeans' in analysis:
+        print("\nK-Means clustering analysis:\n")
+        run_kmeans_analysis(descriptors_list, analysis)
 
     ## END: ANALYSIS ##
 

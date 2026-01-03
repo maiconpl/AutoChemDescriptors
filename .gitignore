@@ -190,3 +190,4 @@ git_read_me.txt
 
 # Ignore .github folder
 .github/
+spec/
