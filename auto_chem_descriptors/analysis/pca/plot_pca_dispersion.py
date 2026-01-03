@@ -3,6 +3,7 @@
 Created on December 10, 2025.
 
 @author: maicon & clayton
+Last modification by MPL: 03/01/2026 to change "myplot" to "_plot_setup".
 Last modification by MPL: 26/12/2025 to adjust the figure legend.
 Last modification by MPL: 10/12/2025.
 '''
@@ -16,7 +17,7 @@ import matplotlib
 matplotlib.use('Agg') # or 'Qt5Agg', 'TkAgg', etc.
 import matplotlib.pyplot as plt
 
-def myplot(score, coeff, labels, X_pca, analysis):
+def _plot_setup(score, coeff, labels, X_pca, analysis):
 
     import random
     random.seed(42)
@@ -75,7 +76,7 @@ def plot_pca_dispersion(descriptors_list, analysis):
     plt.grid()
 
     #Call the function. Use only the 2 PCs.
-    myplot(X_pca[:,0:2], np.transpose(pca.components_[0:2, :]), labels, X_pca, analysis)
+    _plot_setup(X_pca[:,0:2], np.transpose(pca.components_[0:2, :]), labels, X_pca, analysis)
 
     if "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))

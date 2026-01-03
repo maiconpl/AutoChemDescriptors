@@ -1,4 +1,5 @@
-from main_auto_chem_descriptor import main_auto_chem_descriptor
+#from main_auto_chem_descriptor import main_auto_chem_descriptor
+from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 
 if __name__ == '__main__':
 
@@ -51,16 +52,45 @@ if __name__ == '__main__':
 
     n_components=4
     analysis = {
+
     "dscribe_plot": [True],
     "pca_grouping": [True, n_components],
+
+    "kmeans": {
+           "k_min": 2,
+           "k_max": 8,
+           "random_state": 42,
+           "use_minibatch": False,
+           "projection_components": 2
+    },
+
+    "dbscan": {
+           "min_samples": 4,
+           "metric_mode": "auto",
+           "precomputed_max_samples": 1200,
+           "eps": 0.35,              # optional; omit to adopt the knee suggestion
+           "n_jobs": -1,             # optional; set None to use scikit-learn default
+           "algorithm": "brute"      # optional; accepts {'auto','ball_tree','kd_tree','brute'}
+    
+    },
+
+    "kmeans_report": {
+           "report_filename": "report_kmeans.md",
+           "metrics_filename": "kmeans_metrics.csv",
+           "suggestions_filename": "kmeans_suggestions.json",
+           "labels_filename": "kmeans_cluster_labels.csv"
+    },
 
     "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',
                        'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'],
 
     "molecules_label": molecules_coded_list,
+    "legend_bbox_to_anchor": (0.5, -0.180),
+    #"legend_size": 12,
+    "legend_ncol": 2, # number of columns of the legend
     }
 
-    main_auto_chem_descriptor(n_jobs,
+    main_auto_chem_descriptors(n_jobs,
                               input_flow_controller,
                               molecules_coded_list,
                               calculator_controller, analysis)#, is_debug_true=True)

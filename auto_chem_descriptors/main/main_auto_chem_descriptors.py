@@ -28,7 +28,7 @@ from ..analysis.clustering.kmeans.kmeans_analysis import run_kmeans_analysis
 from ..analysis.clustering.dbscan.dbscan_analysis import run_dbscan_analysis
 import csv
 
-def main_auto_chem_descriptor(n_jobs,
+def main_auto_chem_descriptors(n_jobs,
                               input_flow_controller,
                               molecules_coded_list,
                               calculator_controller,
@@ -78,7 +78,8 @@ def main_auto_chem_descriptor(n_jobs,
     ## BEGIN: DESCRIPTORS ##
 
     print("\nBegin descriptors " + '"'+ str(descriptors_type) + '"' + " information:")
-    if descriptors_type == "SMILES":
+    #if descriptors_type == "SMILES":
+    if descriptors_type == "RDKIT":
        descriptors_list = get_descriptors_smiles(n_jobs, molecules_coded_list)#, is_debug_true)
 
     if descriptors_type == "MBTR" or descriptors_type == "SOAP":
@@ -104,7 +105,8 @@ def main_auto_chem_descriptor(n_jobs,
 
     ## BEGIN: WRITING DESCRIPTORS ##
      
-    if descriptors_type == "SMILES":
+    #if descriptors_type == "SMILES":
+    if descriptors_type == "RDKIT":
 
        file_write_txt_name = 'descriptors_from_rdkit.txt'
        file_write_csv_name = 'descriptors_from_rdkit.csv'
@@ -193,18 +195,21 @@ def main_auto_chem_descriptor(n_jobs,
 
     ## BEGIN: ANALYSIS ##
 
-    if 'dscribe_plot' in analysis and descriptors_type != "SMILES":
+    #if 'dscribe_plot' in analysis and descriptors_type != "SMILES":
+    if 'dscribe_plot' in analysis and descriptors_type != "RDKIT":
         plot_dscribe(descriptors_list, descriptors_type, analysis)
 
     if 'pca_grouping' in analysis:
         print("\nPCA grouping analysis:\n")
         plot_pca_grouping(descriptors_list, molecular_encoding, analysis)
 
-    if 'pca_heatmap' in analysis and descriptors_type == "SMILES":
+    #if 'pca_heatmap' in analysis and descriptors_type == "SMILES":
+    if 'pca_heatmap' in analysis and descriptors_type == "RDKIT":
         print("\nPCA heatmap:\n")
         plot_pca_heatmap(descriptors_list, analysis)
 
-    if 'pca_dispersion' in analysis and descriptors_type == "SMILES":
+    #if 'pca_dispersion' in analysis and descriptors_type == "SMILES":
+    if 'pca_dispersion' in analysis and descriptors_type == "RDKIT":
         print("\nPCA dispersion:\n")
         plot_pca_dispersion(descriptors_list, analysis)
 
