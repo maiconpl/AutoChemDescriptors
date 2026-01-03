@@ -16,6 +16,8 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score, silhouette_samples
 from sklearn.preprocessing import StandardScaler
 
+from kmeans_report import generate_kmeans_report
+
 # Otherwise, does not work, it is mandatory:
 import matplotlib
 matplotlib.use('Agg')
@@ -27,13 +29,14 @@ def run_kmeans_analysis(descriptors_list, analysis):
     config = _extract_kmeans_config(analysis)
     feature_matrix = _validate_descriptors(descriptors_list)
     n_samples = feature_matrix.shape[0]
+    use_minibatch_flag = bool(config.get('use_minibatch', False))
 
     print("K-Means analysis: samples =", n_samples, "features =", feature_matrix.shape[1])
 
     scaled_matrix, _ = _scale_features(feature_matrix, config)
     labels_reference = _extract_labels(analysis, n_samples)
 
-    _inspect_outliers(scaled_matrix)
+    outlier_info = _inspect_outliers(scaled_matrix)
 
     k_values = _resolve_k_values(config, n_samples)
     print("Evaluating K range:", k_values)
@@ -61,6 +64,34 @@ def run_kmeans_analysis(descriptors_list, analysis):
                   final_labels,
                   labels_reference,
                   config.get('cluster_plot', 'plot_kmeans_clusters.png'))
+
+    report_payload = {
+        'metrics': metrics,
+        'elbow': {'k': elbow_k, 'justification': elbow_reason},
+        'silhouette': {'k': silhouette_k, 'justification': silhouette_reason},
+        'target_k': target_k,
+        'labels': final_labels.tolist(),
+        'sample_labels': labels_reference,
+        'silhouette_values': silhouette_values,
+        'plots': {
+            'elbow': config.get('elbow_plot', 'plot_kmeans_elbow.png'),
+            'silhouette': config.get('silhouette_plot', 'plot_kmeans_silhouette.png'),
+            'clusters': config.get('cluster_plot', 'plot_kmeans_clusters.png'),
+        },
+        'k_values': k_values,
+        'n_samples': n_samples,
+        'n_features': feature_matrix.shape[1],
+        'random_state': int(config.get('random_state', 42)),
+        'scaling': config.get('scaling', 'standard'),
+        'use_minibatch': use_minibatch_flag,
+        'estimator': 'MiniBatchKMeans' if use_minibatch_flag else 'KMeans',
+        'outlier_info': outlier_info,
+    }
+
+    report_filename = generate_kmeans_report(report_payload, analysis)
+    print("K-Means markdown report saved to:", report_filename)
+
+    return report_payload
 
 
 def _extract_kmeans_config(analysis: Dict[str, Any]) -> Dict[str, Any]:
@@ -107,14 +138,18 @@ def _extract_labels(analysis: Dict[str, Any], n_samples: int) -> List[str]:
     return [f"sample_{i+1}" for i in range(n_samples)]
 
 
-def _inspect_outliers(scaled_matrix: np.ndarray):
+def _inspect_outliers(scaled_matrix: np.ndarray) -> Dict[str, Any]:
     z_scores = np.abs(scaled_matrix)
     extreme_mask = z_scores > 5.0
+    info = {
+        'extreme_count': int(extreme_mask.sum()),
+        'extreme_ratio': float(extreme_mask.sum() / extreme_mask.size) if extreme_mask.size else 0.0,
+        'max_zscore': float(np.max(z_scores)) if z_scores.size else 0.0,
+    }
     if np.any(extreme_mask):
-        ratio = extreme_mask.sum() / extreme_mask.size
-        print("Warning: Detected", extreme_mask.sum(), "feature values beyond 5 std (ratio =", round(ratio, 4), ").")
-    feature_max = z_scores.max()
-    print("Maximum absolute z-score in scaled features:", round(float(feature_max), 3))
+        print("Warning: Detected", extreme_mask.sum(), "feature values beyond 5 std (ratio =", round(info['extreme_ratio'], 4), ").")
+    print("Maximum absolute z-score in scaled features:", round(float(info['max_zscore']), 3))
+    return info
 
 
 def _resolve_k_values(config: Dict[str, Any], n_samples: int) -> List[int]:
