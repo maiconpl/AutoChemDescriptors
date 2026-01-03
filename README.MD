@@ -7,6 +7,7 @@ From a chemist’s standpoint, AutoChemDescriptors is the missing bridge between
 - Scale calculations across as many processes (`n_jobs`) as your workstation allows, accelerating large virtual libraries.
 - Obtain PCA-based grouping, heatmap, and biplot visualizations immediately after descriptor generation.
 - Run a dedicated K-Means clustering pipeline with elbow/silhouette diagnostics, PCA-based scatter plots, and export-ready reports (Markdown + CSV/JSON) for exploratory grouping.
+- Perform density-based clustering with DBSCAN, including automatic eps estimation from the k-distance curve, Tanimoto-distance diagnostics, and publication-quality plots for core/border/noise inspection.
 - Keep audit-ready records (molecule depictions, XYZ snapshots, software versions, execution times) for reproducibility and reporting.
 
 ## Before you begin
@@ -58,6 +59,15 @@ if __name__ == '__main__':
             "projection_components": 2
         },
 
+        "dbscan": {
+            "min_samples": 8,
+            "metric_mode": "auto",
+            "precomputed_max_samples": 1200,
+            "eps": 0.35,              # optional; omit to adopt the knee suggestion
+            "n_jobs": -1,             # optional; set None to use scikit-learn default
+            "algorithm": "brute"      # optional; accepts {'auto','ball_tree','kd_tree','brute'}
+        },
+
         "kmeans_report": {
             "report_filename": "report_kmeans.md",
             "metrics_filename": "kmeans_metrics.csv",
@@ -96,12 +106,19 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - **Molecule images and XYZ snapshots** help trace any data point back to its structure or geometry optimization stage.
 - **PCA figures** visualize grouping tendencies, feature importances, and dominant directions of variance, providing immediate insight into the sampled chemical space.
 - **K-Means artifacts/reports** (`plot_kmeans_elbow.png`, `plot_kmeans_silhouette.png`, `plot_kmeans_clusters.png`, `report_kmeans.md`, `kmeans_metrics.csv`, `kmeans_cluster_labels.csv`, `kmeans_suggestions.json`) complement PCA outputs with partitioning diagnostics, adopted K rationale, and per-sample metadata.
+- **DBSCAN artifacts** (`dbscan_parameters.json`, `dbscan_stats.json`, `dbscan_labels.csv`, `plot_dbscan_k_distance.png`, `plot_dbscan_clusters.png`) expose density reachability (eps, min_samples, core/border/noise counts) along with k-distance curves and annotated PCA projections.
 - **Console logs** register library versions and execution timestamps for reproducibility.
 
 ## Configuring K-Means reports
 - Reports are generated automatically when `analysis["kmeans"]` is enabled. Customize filenames or integrate with downstream tools by providing an optional `analysis["kmeans_report"]` dictionary (defaults shown in the run-script example).
 - The Markdown file (`report_kmeans.md`) summarizes dataset size, estimator settings, suggested K values, cluster balance, and low-silhouette alerts.
 - CSV/JSON sidecars (`kmeans_metrics.csv`, `kmeans_cluster_labels.csv`, `kmeans_suggestions.json`) expose the numeric diagnostics (per-K inertia/silhouette/runtimes, per-sample cluster assignments, and elbow/silhouette recommendations) for further analytics pipelines.
+
+## Configuring DBSCAN analysis
+- Enable `analysis["dbscan"]` to trigger the Tanimoto-based DBSCAN routine. Only clustering parameters are required; filenames for outputs are fixed to (`dbscan_parameters.json`, `dbscan_stats.json`, `dbscan_labels.csv`, `plot_dbscan_k_distance.png`, `plot_dbscan_clusters.png`) to keep downstream automation predictable.
+- `min_samples` defines the density threshold for core points (default `5`). Set `metric_mode` to `"auto"` to let the orchestrator decide between precomputing the full Tanimoto distance matrix or using an online Jaccard search (binary fingerprints only). Force `"precomputed"` if you want the generalized Tanimoto to run even on continuous descriptors; force `"jaccard"` when you know the matrix is binary and small enough.
+- If `eps` is omitted, the module computes the k-distance curve (with `k = min_samples`) and adopts the knee point as the density radius. Supplying `eps` overrides that value, while still logging both the suggestion and the user-provided number in `dbscan_parameters.json`.
+- Optional knobs: `precomputed_max_samples` (default `1500`) to cap when `metric_mode="auto"` switches to the streaming neighbor approach, `n_jobs` to parallelize brute-force searches, and `algorithm` to choose among scikit-learn’s DBSCAN backends.
 
 ## Support and citation
 AutoChemDescriptors was created by Maicon P. Lourenço and Clayton V. F. Filho (from GAMIAC research group at the Federal University of Espírito Santo, in Alegre, Brazil). This research is done in collaboration with Dennis R. Salahub (University of Calgary) and Jiri Hostas (NRC Canada). Please, cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***

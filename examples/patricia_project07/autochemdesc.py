@@ -75,7 +75,15 @@ if __name__ == '__main__':
             "use_minibatch": False,
             "projection_components": 2
         },
-
+        "dbscan": {
+            "min_samples": 8,
+            "metric_mode": "auto",
+            "precomputed_max_samples": 1200,
+            "eps": 0.35,          # optional: omit to rely on knee detection
+            "n_jobs": -1,         # optional: set None to use scikit-learn default
+            # optional: any of {"auto","ball_tree","kd_tree","brute"}
+            "algorithm": "auto"
+        },
 
         "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',
                             'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'],
