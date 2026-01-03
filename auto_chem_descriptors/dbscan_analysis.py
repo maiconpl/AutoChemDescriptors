@@ -17,6 +17,8 @@ from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
+from dbscan_report import generate_dbscan_report
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -86,6 +88,7 @@ def run_dbscan_analysis(descriptors_list, analysis):
                                         metric_mode,
                                         warnings,
                                         knee_info)
+    stats_payload['n_bits'] = int(n_bits)
 
     artifacts = _resolve_artifact_names()
     _save_parameters_file(stats_payload, artifacts['parameters'])
@@ -107,6 +110,20 @@ def run_dbscan_analysis(descriptors_list, analysis):
                    classification,
                    sample_labels,
                    artifacts['cluster_plot'])
+
+    report_payload = _build_report_payload(stats_payload,
+                                           labels,
+                                           classification,
+                                           sample_labels,
+                                           artifacts,
+                                           binary_view is not None,
+                                           profile,
+                                           kth_distances,
+                                           explained_variance,
+                                           eps_config,
+                                           sorted_k_curve)
+    report_filename = generate_dbscan_report(report_payload, analysis)
+    print("DBSCAN markdown report saved to:", report_filename)
 
     return stats_payload
 
@@ -381,6 +398,7 @@ def _resolve_artifact_names() -> Dict[str, str]:
         'stats': 'dbscan_stats.json',
         'k_distance_plot': 'plot_dbscan_k_distance.png',
         'cluster_plot': 'plot_dbscan_clusters.png',
+        'report': 'report_dbscan.md',
     }
 
 
@@ -413,6 +431,36 @@ def _save_stats_file(stats_payload: Dict[str, Any], filename: str):
     with open(filename, 'w', encoding='utf-8') as handler:
         json.dump(stats_payload, handler, indent=2)
     print("DBSCAN stats saved to:", filename)
+
+
+def _build_report_payload(stats_payload: Dict[str, Any],
+                          labels: np.ndarray,
+                          classification: List[str],
+                          sample_labels: List[str],
+                          artifacts: Dict[str, str],
+                          is_binary: bool,
+                          profile: Dict[str, Any],
+                          kth_distances: np.ndarray,
+                          explained_variance: np.ndarray,
+                          eps_config: Optional[float],
+                          sorted_k_curve: np.ndarray) -> Dict[str, Any]:
+    eps_source = 'user_provided' if eps_config is not None else 'knee_suggestion'
+    payload: Dict[str, Any] = {
+        'stats': stats_payload,
+        'labels': labels.tolist(),
+        'classification': classification,
+        'sample_labels': sample_labels,
+        'artifacts': artifacts,
+        'n_bits': stats_payload.get('n_bits') or 0,
+        'is_binary': is_binary,
+        'profile': profile,
+        'kth_distances': kth_distances.tolist(),
+        'projection_variance': explained_variance.tolist() if explained_variance is not None else [],
+        'eps_source': eps_source,
+        'k_distance_curve': sorted_k_curve.tolist(),
+    }
+    payload['stats']['n_bits'] = payload['n_bits']
+    return payload
 
 
 def _plot_k_distance_curve(sorted_curve: np.ndarray,
