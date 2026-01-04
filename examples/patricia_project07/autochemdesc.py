@@ -4,13 +4,14 @@ from pathlib import Path
 import sys
 
 # Ensure the repository root (which contains the auto_chem_descriptors package)
-# is available when the script is executed directly from the examples folder.
+# is available even when PYTHONPATH points directly to the package.
 project_root = Path(__file__).resolve().parents[2]
-if project_root not in map(Path, sys.path):
+if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-#from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
 from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
+
+# from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
 
 if __name__ == '__main__':
 
@@ -96,6 +97,12 @@ if __name__ == '__main__':
             # optional: any of {"auto","ball_tree","kd_tree","brute"}
             "algorithm": "auto"
         },
+        "laplacian_score": {
+            "k_neighbors": 7,     # size of the k-NN graph (>=2)
+            "metric": "auto",     # similarity metric: auto/tanimoto/euclidean
+            "mode": "both",       # which scores to compute: ls/mls/both
+            "quantile": 0.90      # tail fraction used for MLS margins
+        },
 
         "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',
                             'b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y'],
@@ -110,6 +117,6 @@ if __name__ == '__main__':
     }
 
     main_auto_chem_descriptors(n_jobs,
-                              input_flow_controller,
-                              molecules_coded_list,
-                              calculator_controller, analysis)  # , is_debug_true=True)
+                               input_flow_controller,
+                               molecules_coded_list,
+                               calculator_controller, analysis)  # , is_debug_true=True)
