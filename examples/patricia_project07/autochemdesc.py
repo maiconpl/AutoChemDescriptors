@@ -1,4 +1,5 @@
-from main_auto_chem_descriptor import main_auto_chem_descriptor
+#from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
+from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 
 if __name__ == '__main__':
 
@@ -97,7 +98,7 @@ if __name__ == '__main__':
             'GAA25', 'GAA35', 'GAA45', 'GANT']
     }
 
-    main_auto_chem_descriptor(n_jobs,
+    main_auto_chem_descriptors(n_jobs,
                               input_flow_controller,
                               molecules_coded_list,
                               calculator_controller, analysis)  # , is_debug_true=True)

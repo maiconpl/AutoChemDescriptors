@@ -6,23 +6,19 @@ From a chemist’s standpoint, AutoChemDescriptors is the missing bridge between
 - Generate RDKit-based descriptors directly from SMILES or invoke PySCF + DScribe to obtain MBTR descriptors informed by electronic-structure optimization.
 - Scale calculations across as many processes (`n_jobs`) as your workstation allows, accelerating large virtual libraries.
 - Obtain PCA-based grouping, heatmap, and biplot visualizations immediately after descriptor generation.
-- Keep audit-ready records (molecule depictions, XYZ snapshots, software versions, execution times) for reproducibility and reporting.
 - Run a dedicated K-Means clustering pipeline with elbow/silhouette diagnostics, PCA-based scatter plots, and export-ready reports (Markdown + CSV/JSON) for exploratory grouping.
 - Perform density-based clustering with DBSCAN, including automatic eps estimation from the k-distance curve, Tanimoto-distance diagnostics, and publication-quality plots for core/border/noise inspection.
+- Keep audit-ready records (molecule depictions, XYZ snapshots, software versions, execution times) for reproducibility and reporting.
 
 ## Before you begin
 1. Set up a Python 3 environment and install the packages listed in `requirements.txt` (RDKit, PySCF, DScribe, ASE, NumPy, SciPy, Matplotlib, scikit-learn, Torch, PyBERNY).
 2. Place the `auto_chem_descriptors` package somewhere in your project workspace. You are free to organize your runs in separate folders; this guide does not rely on the bundled `examples` directory.
 
 ## Preparing your run script
-- Create a working directory (for instance, `~/chem_runs/run001`) and inside it create a file named `autochemdesc.py` with the following structure. All parameters—descriptor type, molecule list, calculator settings, PCA configuration, number of jobs, debug flag—are user-editable, but keep the structural skeleton intact.
-- edit ~/.bashrc and insert: " export "PYTHONPATH=/mnt/d/workspace/AutoChemDescriptors.0.0.8:$PYTHONPATH" "
-- source ~/.bashrch
-
+Create a working directory (for instance, `~/chem_runs/run001`) and inside it create a file named `autochemdesc.py` with the following structure. All parameters—descriptor type, molecule list, calculator settings, PCA configuration, number of jobs, debug flag—are user-editable, but keep the structural skeleton intact.
 
 ```python
-#from main_auto_chem_descriptor import main_auto_chem_descriptor
-from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
+from main_auto_chem_descriptor import main_auto_chem_descriptor
 
 if __name__ == '__main__':
 
@@ -87,7 +83,7 @@ if __name__ == '__main__':
           'GAA31', 'GAA41', 'GAA22']
      }
 
-    main_auto_chem_descriptors(n_jobs,
+    main_auto_chem_descriptor(n_jobs,
                               input_flow_controller,
                               molecules_coded_list,
                               calculator_controller,
@@ -126,4 +122,12 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - `analysis["dbscan_report"]` (optional dict) lets you rename the Markdown file (`report_filename`, default `report_dbscan.md`) and cap how many entries appear in the noise/border/tail tables (`noise_limit`, `border_limit`, `sparse_limit`). The report always includes the density interpreter (PCA × K-Means × DBSCAN narrative, epsilon discrepancy, chemoinformatics notes) plus a generic decision playbook so each run documents both specific findings and reusable guidance.
 
 ## Support and citation
-AutoChemDescriptors was created by Maicon P. Lourenço and Clayton V. F. Filho (from GAMIAC research group at the Federal University of Espírito Santo, in Alegre, Brazil). This research is done in collaboration with Dennis R. Salahub (University of Calgary), Jiri Hostas (NRC Canada), Hélio Anderson Duarte and Ângelo de Fátima from Federal University of Mians Gerais. Undergrad students from UFES involved: Stephano Dorigo Scaramussa and Alehando Lopes Gamas. Acknowledgements: REDNIU INCT, FAPES, CNPQ, CAPES. Please, cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
+<<<<<<< HEAD
+<<<<<<< HEAD
+AutoChemDescriptors was created by Maicon P. Lourenço and Clayton V. F. Filho (from GAMIAC research group at the Federal University of Espírito Santo, in Alegre, Brazil). This research is done in collaboration with Dennis R. Salahub (University of Calgary) and Jiri Hostas (NRC Canada). Please, Cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
+=======
+AutoChemDescriptors was created by Maicon P. Lourenço and Clayton V. F. Filho (from GAMIAC research group at the Federal University of Espírito Santo, in Alegre, Brazil). This research is done in collaboration with Dennis R. Salahub (University of Calgary) and Jiri Hostas (NRC Canada). Please, cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
+>>>>>>> stage
+=======
+AutoChemDescriptors was created by Maicon P. Lourenço and Clayton V. F. Filho (from GAMIAC research group at the Federal University of Espírito Santo, in Alegre, Brazil). This research is done in collaboration with Dennis R. Salahub (University of Calgary) and Jiri Hostas (NRC Canada). Please, cite the references printed by `software_information_auto_chem_descriptors` in any publication using these workflows. For scientific or technical inquiries, reach out via maiconpl01@gmail.com.***
+>>>>>>> 20bec1a59398ac50d6cc6e481f651fa597faabdc
