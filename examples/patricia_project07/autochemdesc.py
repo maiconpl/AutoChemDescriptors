@@ -1,3 +1,14 @@
+"""Entry point for running AutoChemDescriptors example locally."""
+
+from pathlib import Path
+import sys
+
+# Ensure the repository root (which contains the auto_chem_descriptors package)
+# is available when the script is executed directly from the examples folder.
+project_root = Path(__file__).resolve().parents[2]
+if project_root not in map(Path, sys.path):
+    sys.path.insert(0, str(project_root))
+
 #from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
 from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 
