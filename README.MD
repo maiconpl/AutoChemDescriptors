@@ -159,6 +159,7 @@ if __name__ == "__main__":
   - `kmeans` requires `k_min`, `k_max`, and `random_state`; `use_minibatch`, `projection_components`, and reporting filenames are optional extras.
   - `dbscan` needs `min_samples`; `eps`, `n_jobs`, `metric_mode`, `precomputed_max_samples`, and `algorithm` tailor runtime versus accuracy and can be dropped when defaults suffice.
   - `laplacian_score` exposes the spectral ranking routines. Provide `k_neighbors` (k-NN graph size), `metric` (`"auto"`, `"tanimoto"`, or `"euclidean"`), `mode` (`"ls"`, `"mls"`, or `"both"`), and `quantile` (fraction of samples that define the MLS tails). Advanced users can extend the dictionary with `skew_left`, `skew_right`, or `adaptive_kernel`.
+  - `laplacian_score_report` (optional) lets you rename `report_laplacian_score.md` or override `top_descriptors` for the Markdown highlights without touching the spectral configuration.
   - `molecules_color` and `molecules_label` only matter when you want persistent color/label assignments in plots and reports.
 - **`is_debug_true` (optional):** Toggle when you want verbose logs; you can omit it entirely if you prefer the default `False`.
 - **`main_auto_chem_descriptors` call (mandatory):** Pass arguments in the order shown (or as keyword arguments). Leaving any of the first four positional parameters undefined will raise validation errors before any calculation starts.
@@ -180,7 +181,7 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - **PCA figures** visualize grouping tendencies, feature importances, and dominant directions of variance, providing immediate insight into the sampled chemical space.
 - **K-Means artifacts/reports** (`plot_kmeans_elbow.png`, `plot_kmeans_silhouette.png`, `plot_kmeans_clusters.png`, `report_kmeans.md`, `kmeans_metrics.csv`, `kmeans_cluster_labels.csv`, `kmeans_suggestions.json`) complement PCA outputs with partitioning diagnostics, adopted K rationale, and per-sample metadata.
 - **DBSCAN artifacts/reports** (`dbscan_parameters.json`, `dbscan_stats.json`, `dbscan_labels.csv`, `plot_dbscan_k_distance.png`, `plot_dbscan_clusters.png`, `report_dbscan.md`) expose density reachability (eps, min_samples, core/border/noise counts) along with k-distance curves, annotated PCA projections, and a Markdown interpreter that contrasts PCA/K-Means/DBSCAN, quantifies epsilon deltas, and appends a decision playbook for future runs.
-- **Laplacian Score outputs** (`laplacian_scores.csv`, `plot_laplacian_ls.png`, `plot_laplacian_mls.png`) provide an ordered list of descriptors by classical Laplacian Score plus Marginal Laplacian Score (tail-focused) along with publication-ready figures so you can cut the descriptor set directly from manifold-aware evidence.
+- **Laplacian Score outputs** (`laplacian_scores.csv`, `plot_laplacian_ls.png`, `plot_laplacian_mls.png`, `report_laplacian_score.md`) provide an ordered list of descriptors by classical Laplacian Score plus Marginal Laplacian Score (tail-focused) along with publication-ready figures and a Markdown interpretation so you can cut the descriptor set directly from manifold-aware evidence.
 - **Console logs** register library versions and execution timestamps for reproducibility.
 
 ## Configuring K-Means reports
@@ -259,7 +260,7 @@ if __name__ == '__main__':
 - `pca_heatmap`, `pca_grouping`, `pca_dispersion`: Optional. When set to `[True, n_components]` they generate three PCA-based visualizations.
 - `kmeans`: Optional but popular. Supply at least `k_min`, `k_max`, and `random_state`. Outputs elbow/silhouette/cluster plots plus Markdown and CSV diagnostics.
 - `dbscan`: Optional. Requires `min_samples`; other fields refine the density search. Produces k-distance and cluster plots, JSON/CSV summaries, and a Markdown report.
-- `laplacian_score`: Optional. When present, creates `laplacian_scores.csv`, `plot_laplacian_ls.png`, and (if `mode` includes MLS) `plot_laplacian_mls.png`.
+- `laplacian_score`: Optional. When present, creates `laplacian_scores.csv`, `plot_laplacian_ls.png`, `plot_laplacian_mls.png` (if MLS is enabled), and `report_laplacian_score.md`.
 - `molecules_label` / `molecules_color`: Optional. Align visual identities across figures.
 
 There are no mandatory analysis sections; leaving `analysis` empty runs descriptor generation only. When you add entries, each module becomes available through the same UI-level pattern, so users always know which artifacts will appear in their workspace.
