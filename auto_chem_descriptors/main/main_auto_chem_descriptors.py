@@ -67,7 +67,12 @@ def main_auto_chem_descriptors(n_jobs,
     is_force_field_true = False
 
     molecular_encoding = input_flow_controller['molecular_encoding']
-    descriptors_type = input_flow_controller['descriptors_type']
+    descriptors_type = input_flow_controller['descriptors_type'].upper()
+
+    # Legacy inputs still allow "SMILES" even though all RDKit-based flows
+    # now branch on "RDKIT".
+    if descriptors_type == "SMILES":
+        descriptors_type = "RDKIT"
     
     if len(calculator_controller) != 0:
        is_force_field_true = calculator_controller['is_force_field_true']
