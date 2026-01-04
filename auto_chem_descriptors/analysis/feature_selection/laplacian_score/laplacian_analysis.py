@@ -15,6 +15,7 @@ import numpy as np
 
 from .laplacian_processing import compute_laplacian_scores
 from .laplacian_plotting import generate_laplacian_plots
+from .laplacian_report import generate_laplacian_report
 
 
 def run_laplacian_score_analysis(descriptors_list, analysis: Dict[str, Any]) -> Dict[str, Any]:
@@ -27,12 +28,14 @@ def run_laplacian_score_analysis(descriptors_list, analysis: Dict[str, Any]) -> 
 
     csv_filename = _export_ranking_table(feature_names, payload, config)
     plot_filenames = generate_laplacian_plots(feature_names, payload, config)
+    report_filename = generate_laplacian_report(feature_names, payload, analysis, config)
 
     _log_console_summary(feature_names, payload)
 
     return {
         'csv_filename': csv_filename,
         'plot_filenames': plot_filenames,
+        'report_filename': report_filename,
         'ls_scores': payload['ls_scores'],
         'mls_scores': payload['mls_scores'],
         'feature_names': feature_names,
