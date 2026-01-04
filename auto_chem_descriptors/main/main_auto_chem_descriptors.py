@@ -26,6 +26,7 @@ from ..analysis.pca.plot_pca_heatmap import plot_pca_heatmap
 from ..analysis.pca.plot_pca_dispersion import plot_pca_dispersion
 from ..analysis.clustering.kmeans.kmeans_analysis import run_kmeans_analysis
 from ..analysis.clustering.dbscan.dbscan_analysis import run_dbscan_analysis
+from ..analysis.feature_selection.laplacian_score.laplacian_analysis import run_laplacian_score_analysis
 import csv
 
 def main_auto_chem_descriptors(n_jobs,
@@ -225,6 +226,10 @@ def main_auto_chem_descriptors(n_jobs,
     if 'dbscan' in analysis:
         print("\nDBSCAN clustering analysis:\n")
         run_dbscan_analysis(descriptors_list, analysis)
+
+    if 'laplacian_score' in analysis:
+        print("\nLaplacian Score feature ranking:\n")
+        run_laplacian_score_analysis(descriptors_list, analysis)
 
     ## END: ANALYSIS ##
 
