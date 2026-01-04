@@ -96,6 +96,66 @@ if __name__ == '__main__':
 
 Feel free to switch `descriptors_type` to `"MBTR"`, add basis-set parameters to `calculator_controller`, or tailor the PCA options; the structure remains identical, and every field is configurable.
 
+### Writing your own descriptor script (what's mandatory and what's optional)
+If you prefer a complete end-to-end reference, open `examples/patricia_project07/autochemdesc.py`. The example showcases every dial available, but you rarely need them all. The checklist below distills what the final user must keep and what can be pruned when crafting a custom descriptor script.
+
+```python
+from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
+
+def run_descriptor():
+    n_jobs = 2  # mandatory: parallel workers for descriptor generation
+
+    input_flow_controller = {
+        "molecular_encoding": "SMILES",  # mandatory: {"SMILES","SELFIES"}
+        "descriptors_type": "SMILES",    # mandatory: {"SMILES","MBTR"}
+    }
+
+    molecules_coded_list = ["COc1ccccc1O"]  # mandatory: list of encodings
+
+    calculator_controller = {}  # optional: e.g., PySCF, basis set, MBTR grid
+
+    analysis = {  # optional: drop sections you do not need
+        "pca_heatmap": [True, 4],     # optional: bool flag + n_components
+        "pca_grouping": [False, 3],   # optional: disable by setting False
+        "kmeans": {                   # optional: only include if clustering
+            "k_min": 2, "k_max": 6,   # required fields inside the block
+            "random_state": 42,
+        },
+        "dbscan": {                   # optional: enable density clustering
+            "min_samples": 8,         # mandatory inside DBSCAN block
+            "eps": 0.25,              # optional: omit to rely on knee detection
+        },
+        "molecules_color": ["b"],     # optional: colormap for plots
+        "molecules_label": ["Seed"],  # optional: annotations per molecule
+    }
+
+    main_auto_chem_descriptors(
+        n_jobs,
+        input_flow_controller,
+        molecules_coded_list,
+        calculator_controller,
+        analysis,
+    )
+
+if __name__ == "__main__":
+    run_descriptor()
+```
+
+- **Imports and path handling (mandatory):** Ensure `auto_chem_descriptors` is in `PYTHONPATH` or prepend the repo root manually, just as the Patricia example does before importing `main_auto_chem_descriptors`.
+- **Execution guard (mandatory):** Keep the `if __name__ == "__main__":` block so you can import the script elsewhere without triggering a run immediately.
+- **`input_flow_controller` (mandatory):** Supply both `molecular_encoding` (SMILES or SELFIES) and `descriptors_type` (SMILES or MBTR). AutoChemDescriptors derives downstream behavior from these two keys, so omitting either prevents execution.
+- **`molecules_coded_list` (mandatory):** Provide every structure you want in the batch. At least one entry is required; additional strings simply extend the dataset.
+- **`calculator_controller` (optional unless you run MBTR):** Leave it empty for pure RDKit descriptors, or define PySCF/DScribe settings (basis set, convergence, grid) when requesting MBTR so quantum and descriptor backends stay synchronized.
+- **`analysis` (fully optional):** Remove the dictionary entirely for headless descriptor generation or include only the subsections you need.
+  - `pca_heatmap`, `pca_grouping`, and `pca_dispersion` accept `[flag, n_components]`; the list structure is required only when the flag is `True`.
+  - `kmeans` requires `k_min`, `k_max`, and `random_state`; `use_minibatch`, `projection_components`, and reporting filenames are optional extras.
+  - `dbscan` needs `min_samples`; `eps`, `n_jobs`, `metric_mode`, `precomputed_max_samples`, and `algorithm` tailor runtime versus accuracy and can be dropped when defaults suffice.
+  - `molecules_color` and `molecules_label` only matter when you want persistent color/label assignments in plots and reports.
+- **`is_debug_true` (optional):** Toggle when you want verbose logs; you can omit it entirely if you prefer the default `False`.
+- **`main_auto_chem_descriptors` call (mandatory):** Pass arguments in the order shown (or as keyword arguments). Leaving any of the first four positional parameters undefined will raise validation errors before any calculation starts.
+
+This structure keeps descriptor scripts approachable for end users: start with the mandatory trio (`n_jobs`, `input_flow_controller`, `molecules_coded_list`), add quantum or clustering blocks only when they add value, and rely on the Patricia project script solely as a reference for advanced combinations.
+
 ## Running the workflow
 Inside the directory that contains `autochemdesc.py`, point `PYTHONPATH` to wherever `auto_chem_descriptors` resides and execute the script. Example session (path names are illustrative):
 
