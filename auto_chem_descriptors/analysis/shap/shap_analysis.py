@@ -6,6 +6,7 @@ from typing import Any, Dict
 
 from .shap_processing import compute_shap_analysis_payload
 from .shap_plotting import plot_shap_diagnostics
+from .shap_report import generate_shap_report
 
 
 def run_shap_analysis(descriptors_list, analysis: Dict[str, Any]) -> Dict[str, Any]:
@@ -13,16 +14,19 @@ def run_shap_analysis(descriptors_list, analysis: Dict[str, Any]) -> Dict[str, A
     config = _extract_shap_config(analysis)
     payload = compute_shap_analysis_payload(descriptors_list, config, analysis)
     figure_filenames = plot_shap_diagnostics(payload, config)
-    print("SHAP explainability plots saved to:")
+    report_filename = generate_shap_report(payload, config, analysis, figure_filenames)
+    print("SHAP explainability artifacts saved to:")
     for key, value in figure_filenames.items():
         if isinstance(value, list):
             for entry in value:
-                print(f"  - {key}: {entry}")
+                print(f"  - figure {key}: {entry}")
         else:
-            print(f"  - {key}: {value}")
+            print(f"  - figure {key}: {value}")
+    print(f"  - report: {report_filename}")
     return {
         'figures': figure_filenames,
         'payload': payload,
+        'report_filename': report_filename,
     }
 
 
