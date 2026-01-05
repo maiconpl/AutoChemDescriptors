@@ -11,6 +11,7 @@ if str(project_root) not in sys.path:
 
 from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 
+
 # from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
 
 if __name__ == '__main__':
@@ -102,6 +103,35 @@ if __name__ == '__main__':
             "metric": "auto",     # similarity metric: auto/tanimoto/euclidean
             "mode": "both",       # which scores to compute: ls/mls/both
             "quantile": 0.90      # tail fraction used for MLS margins
+        },
+        "shap_validation": {
+            "targets": [
+                0.8836916332,  # Guaiacol
+                0.8983917425,  # GACO1
+                0.9191498071,  # GAO00
+                0.9154075725,  # GAA21
+                0.9014868912,  # GAA31
+                0.9057028211,  # GAA41
+                0.9100731756,  # GAA22
+                0.9037308556,  # GAA32
+                0.9104481272,  # GAA42
+                0.8978656128,  # GAA23
+                0.9110157459,  # GAA33
+                0.9059949662,  # GAA43
+                0.9104868206,  # GAA24
+                0.9159857769,  # GAA34
+                0.9130673216,  # GAA44
+                0.9089714453,  # GAA25
+                0.9019378755,  # GAA35
+                0.8889553183,  # GAA45
+                0.9123450000   # GANT (placeholder; replace with the real target)
+            ],
+            "task": "regression",
+            "model": "random_forest",
+            "top_features": 12,
+            "scaling": "none",
+            "background_size": 200,
+            "dependence_plots": 2
         },
 
         "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',

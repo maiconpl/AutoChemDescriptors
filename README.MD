@@ -160,6 +160,7 @@ if __name__ == "__main__":
   - `dbscan` needs `min_samples`; `eps`, `n_jobs`, `metric_mode`, `precomputed_max_samples`, and `algorithm` tailor runtime versus accuracy and can be dropped when defaults suffice.
   - `laplacian_score` exposes the spectral ranking routines. Provide `k_neighbors` (k-NN graph size), `metric` (`"auto"`, `"tanimoto"`, or `"euclidean"`), `mode` (`"ls"`, `"mls"`, or `"both"`), and `quantile` (fraction of samples that define the MLS tails). Advanced users can extend the dictionary with `skew_left`, `skew_right`, or `adaptive_kernel`.
   - `laplacian_score_report` (optional) lets you rename `report_laplacian_score.md` or override `top_descriptors` for the Markdown highlights without touching the spectral configuration.
+  - `shap_validation` activates the SHAP-based explainability workflow. Supply the vector of `targets` (one value per molecule) plus optional knobs such as `task` (`"regression"`/`"classification"`), `model` (`"random_forest"`, `"extra_trees"`, or `"hist_gradient_boosting"`), `n_estimators`, `scaling`, and visualization limits like `top_features`. Advanced options—including `background_size`, `dependence_plots`, and filename overrides for each PNG (`importance_plot_filename`, `beeswarm_plot_filename`, `dependence_plot_prefix`)—live inside the same dictionary so you never touch the global analysis config.
   - `molecules_color` and `molecules_label` only matter when you want persistent color/label assignments in plots and reports.
 - **`is_debug_true` (optional):** Toggle when you want verbose logs; you can omit it entirely if you prefer the default `False`.
 - **`main_auto_chem_descriptors` call (mandatory):** Pass arguments in the order shown (or as keyword arguments). Leaving any of the first four positional parameters undefined will raise validation errors before any calculation starts.
@@ -182,6 +183,7 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - **K-Means artifacts/reports** (`plot_kmeans_elbow.png`, `plot_kmeans_silhouette.png`, `plot_kmeans_clusters.png`, `report_kmeans.md`, `kmeans_metrics.csv`, `kmeans_cluster_labels.csv`, `kmeans_suggestions.json`) complement PCA outputs with partitioning diagnostics, adopted K rationale, and per-sample metadata.
 - **DBSCAN artifacts/reports** (`dbscan_parameters.json`, `dbscan_stats.json`, `dbscan_labels.csv`, `plot_dbscan_k_distance.png`, `plot_dbscan_clusters.png`, `report_dbscan.md`) expose density reachability (eps, min_samples, core/border/noise counts) along with k-distance curves, annotated PCA projections, and a Markdown interpreter that contrasts PCA/K-Means/DBSCAN, quantifies epsilon deltas, and appends a decision playbook for future runs.
 - **Laplacian Score outputs** (`laplacian_scores.csv`, `plot_laplacian_ls.png`, `plot_laplacian_mls.png`, `report_laplacian_score.md`) provide an ordered list of descriptors by classical Laplacian Score plus Marginal Laplacian Score (tail-focused) along with publication-ready figures and a Markdown interpretation so you can cut the descriptor set directly from manifold-aware evidence.
+- **SHAP outputs** (`plot_shap_importance.png`, `plot_shap_beeswarm.png`, and `plot_shap_dependence.png`) quantify descriptor influence on the trained surrogate model via mean-absolute SHAP rankings, swarm distributions across the library, and a multi-panel dependence figure colored by the target property, enabling physicochemical validation of any black-box learner in the pipeline.
 - **Console logs** register library versions and execution timestamps for reproducibility.
 
 ## Configuring K-Means reports
@@ -202,6 +204,43 @@ The program will report descriptor values, save any requested PNG/XYZ/PCA files,
 - `mode` decides which ranking(s) to emit: `"ls"` (classical Laplacian Score), `"mls"` (Marginal Laplacian Score), or `"both"` (default). `"both"` is recommended because the marginal variant highlights descriptors whose informative content hides in the distribution tails.
 - `quantile` (default `0.90`) defines how deep into the distribution tails the MLS focuses. Adjust `skew_left`/`skew_right` to change the skewness thresholds that classify descriptors as left-, right-, or two-sided marginals.
 - Optional knobs: `adaptive_kernel` toggles between the self-tuning heat kernel (default `True`) and a global heat parameter (`heat_parameter`). `ls_plot_filename` and `mls_plot_filename` let you rename the two PNG outputs. All runs export a CSV with LS/MLS ranks, skewness, and marginal coverage plus matching publication-grade figures.
+
+## Configuring SHAP validation
+- Enable `analysis["shap_validation"]` to obtain publication-grade explainability for any descriptor matrix. You must provide one target value per molecule (order matters and must mirror `molecules_coded_list`).
+- `task` controls the surrogate objective (`"regression"` or `"classification"`). `model` accepts `"random_forest"`, `"extra_trees"`, or `"hist_gradient_boosting"`. Tune the usual scikit-learn knobs (`n_estimators`, `max_depth`, `min_samples_leaf`, etc.) if you need a specific bias/variance profile.
+- Optional flags: `scaling` (`"none"` or `"standard"`), `top_features` (how many descriptors appear in the global ranking and downstream plots), `background_size` (TreeSHAP reference set), `dependence_plots` (how many descriptors to showcase in the multi-panel dependence figure), and filename overrides (`importance_plot_filename`, `beeswarm_plot_filename`, `dependence_plot_filename`).
+- Outputs: `plot_shap_importance.png` (global ranking), `plot_shap_beeswarm.png` (distribution across molecules), and `plot_shap_dependence.png` (grid of Arrhenius-style dependence panels) plus console metrics (R²/RMSE or accuracy/AUC). All figures share the same encoding so you can drop them into a manuscript without extra editing.
+
+### SHAP configuration example
+The snippet below mirrors the Patricia project but trimmed to the seven SMILES shown earlier in this README. Replace the target values with your experimental or simulated measurements while preserving the order.
+
+```python
+analysis = {
+    # ... other analyses ...
+    "shap_validation": {
+        "targets": [
+            0.88,  # COc1ccccc1O
+            0.90,  # COc1ccccc1OCC(=O)O
+            0.92,  # COc1ccccc1OCC(=O)Nc1ccccc1
+            0.91,  # COc1ccccc1OCC(=O)Nc1ccccc1F
+            0.89,  # COc1ccccc1OCC(=O)Nc1cccc(F)c1
+            0.90,  # COc1ccccc1OCC(=O)Nc1ccc(F)cc1
+            0.93   # COc1ccccc1OCC(=O)Nc1cccc2ccccc12
+        ],
+        "task": "regression",
+        "model": "random_forest",
+        "top_features": 12,
+        "scaling": "none",
+        "background_size": 200,
+        "dependence_plots": 2
+    }
+}
+```
+
+Best practices:
+- **Targets:** numeric vectors for regression or integer labels for classification; length must equal the number of molecules and the order must be identical. Comments help future readers map values back to SMILES.
+- **Surrogate fidelity:** keep `background_size` between 100 and 500 to balance TreeSHAP stability and runtime. Use `kernel_nsamples` only when forcing KernelSHAP.
+- **Dependence panels:** `dependence_plots` picks the top-N descriptors (based on mean |SHAP|) to visualize in `plot_shap_dependence.png`. All subplots share the same colormap and legend, making the figure manuscript-ready.
 
 ## End-to-end example with the Laplacian analysis enabled
 The snippet below mirrors what most UI-facing users need to fill in. Replace the placeholder SMILES with your own library; the rest of the structure ensures every available analysis is wired up safely.
