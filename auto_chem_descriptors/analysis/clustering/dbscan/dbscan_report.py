@@ -7,14 +7,18 @@ Markdown reporting for DBSCAN density-clustering diagnostics.
 
 from __future__ import annotations
 
+import math
+import os
+import re
 from collections import Counter
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
 
-import math
-
 ReportPayload = Dict[str, Any]
 ClusterRow = Dict[str, Any]
+
+DEFAULT_REPORT_FILENAME = 'dbscan_report.md'
+DBSCAN_PREFIX = 'dbscan'
 
 
 def generate_dbscan_report(payload: ReportPayload,
@@ -22,7 +26,8 @@ def generate_dbscan_report(payload: ReportPayload,
     '''Generate a Markdown summary for a DBSCAN run.'''
     validated = _validate_payload(payload)
     report_settings = _extract_report_settings(analysis)
-    report_filename = report_settings.get('report_filename', 'report_dbscan.md')
+    requested_name = report_settings.get('report_filename') if isinstance(report_settings, dict) else None
+    report_filename = _normalize_report_filename(requested_name, DEFAULT_REPORT_FILENAME)
 
     lines = _build_report_lines(validated, report_settings)
 
@@ -77,6 +82,35 @@ def _extract_report_settings(analysis: Optional[Dict[str, Any]]) -> Dict[str, An
     return settings
 
 
+def _normalize_report_filename(candidate: Optional[str], fallback: str) -> str:
+    '''Ensure the DBSCAN report filename starts with dbscan_ and contains no other instances.'''
+    fallback_name = os.path.basename(fallback or DEFAULT_REPORT_FILENAME)
+    fallback_ext = os.path.splitext(fallback_name)[1]
+    fallback_stem = _extract_fallback_stem(fallback_name)
+
+    resolved = candidate.strip() if isinstance(candidate, str) else ''
+    directory, filename = os.path.split(resolved)
+    if not filename:
+        filename = fallback_name
+        if not directory and resolved:
+            directory = resolved
+    stem, ext = os.path.splitext(filename)
+    sanitized_stem = re.sub(DBSCAN_PREFIX, '', stem, flags=re.IGNORECASE).lstrip('_- .')
+    if not sanitized_stem:
+        sanitized_stem = fallback_stem
+    normalized_stem = f"{DBSCAN_PREFIX}_{sanitized_stem}"
+    normalized_stem = re.sub(r'_+', '_', normalized_stem).rstrip('_')
+    normalized_ext = ext if ext else fallback_ext
+    normalized_name = normalized_stem + normalized_ext
+    return os.path.join(directory, normalized_name) if directory else normalized_name
+
+
+def _extract_fallback_stem(filename: str) -> str:
+    stem, _ = os.path.splitext(filename)
+    trimmed = re.sub(r'^dbscan[_-]*', '', stem, flags=re.IGNORECASE)
+    return trimmed or 'report'
+
+
 def _build_report_lines(payload: ReportPayload, report_settings: Dict[str, Any]) -> List[str]:
     stats = payload['stats']
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -105,12 +139,14 @@ def _build_report_lines(payload: ReportPayload, report_settings: Dict[str, Any])
 
     lines.extend(_render_reachability_section(payload))
     lines.append("")
+    lines.extend(_render_k_distance_figure(payload['artifacts']))
 
     cluster_rows = _build_cluster_inventory(payload['labels'],
                                            payload['classification'],
                                            payload['sample_labels'])
     lines.extend(_render_cluster_section(stats, cluster_rows))
     lines.append("")
+    lines.extend(_render_cluster_figure(payload['artifacts']))
 
     lines.extend(_render_classification_section(stats))
     lines.append("")
@@ -161,6 +197,18 @@ def _render_reachability_section(payload: ReportPayload) -> List[str]:
 
     interpretation = _describe_reachability(stats)
     lines.extend(interpretation)
+    lines.append("")
+    return lines
+
+
+def _render_k_distance_figure(artifacts: Dict[str, Any]) -> List[str]:
+    path = artifacts.get('k_distance_plot') if isinstance(artifacts, dict) else None
+    if not path:
+        return []
+    lines: List[str] = []
+    lines.append("### k-distance visualization")
+    lines.append("The reachability table above is complemented by the sorted k-distance curve below; the horizontal dashed line shows the adopted eps so readers can visually verify how the knee supports the numerical diagnostics.")
+    lines.append(f"![DBSCAN k-distance curve]({path})")
     lines.append("")
     return lines
 
@@ -233,6 +281,18 @@ def _render_cluster_section(stats: Dict[str, Any], cluster_rows: List[ClusterRow
         lines.append(f"| {row['cluster']} | {row['count']} | {row['percentage']:.2f} | {row['core']} | {row['border']} | {row['core_ratio']*100:.1f}% | {examples} |")
     lines.append("")
     lines.extend(_describe_cluster_balance(stats, cluster_rows))
+    lines.append("")
+    return lines
+
+
+def _render_cluster_figure(artifacts: Dict[str, Any]) -> List[str]:
+    path = artifacts.get('cluster_plot') if isinstance(artifacts, dict) else None
+    if not path:
+        return []
+    lines: List[str] = []
+    lines.append("### Cluster projection")
+    lines.append("The following PCA scatter plot mirrors the cluster inventory table: colors identify DBSCAN clusters while marker shapes encode core (circles), border (squares), and noise (crosses).")
+    lines.append(f"![DBSCAN cluster scatter]({path})")
     lines.append("")
     return lines
 
