@@ -80,6 +80,15 @@ if __name__ == '__main__':
             "quantile": 0.90
         },
 
+        "pcapg": {
+            "n_components": 8,
+            "alpha": 0.9,
+            "beta": 0.04,
+            "lambda_reg": 1.2,
+            "n_neighbors": 10,
+            "top_features": 20
+        },
+
         "kmeans_report": {
             "report_filename": "report_kmeans.md",
             "metrics_filename": "kmeans_metrics.csv",
@@ -160,6 +169,7 @@ if __name__ == "__main__":
   - `dbscan` needs `min_samples`; `eps`, `n_jobs`, `metric_mode`, `precomputed_max_samples`, and `algorithm` tailor runtime versus accuracy and can be dropped when defaults suffice.
   - `laplacian_score` exposes the spectral ranking routines. Provide `k_neighbors` (k-NN graph size), `metric` (`"auto"`, `"tanimoto"`, or `"euclidean"`), `mode` (`"ls"`, `"mls"`, or `"both"`), and `quantile` (fraction of samples that define the MLS tails). Advanced users can extend the dictionary with `skew_left`, `skew_right`, or `adaptive_kernel`.
   - `laplacian_score_report` (optional) lets you rename `report_laplacian_score.md` or override `top_descriptors` for the Markdown highlights without touching the spectral configuration.
+  - `pcapg` activates the PCA + Possibilistic Graph (PCAPG) selector. Provide `n_components` (latent dimension), `alpha` (graph-preservation weight), `beta` (L2,1 sparsity strength), `lambda_reg` (graph regularization), `n_neighbors` (adaptive graph degree), and `top_features` (how many descriptors appear in the ranking/plots). Optional keys mirror other analyses: `scaling` (defaults to `"standard"`), `max_iter`, `tol`, and filename overrides (`ranking_plot_filename`, `manifold_plot_filename`, `convergence_plot_filename`, `csv_filename`). Running PCAPG automatically generates `pcapg_feature_scores.csv`, `plot_pcapg_importance.png`, `plot_pcapg_manifold.png`, and `plot_pcapg_convergence.png`, each styled for publication use.
   - `shap_validation` activates the SHAP-based explainability workflow. Supply the vector of `targets` (one value per molecule) plus optional knobs such as `task` (`"regression"`/`"classification"`), `model` (`"random_forest"`, `"extra_trees"`, or `"hist_gradient_boosting"`), `n_estimators`, `scaling`, and visualization limits like `top_features`. Advanced options—including `background_size`, `dependence_plots`, and filename overrides for each PNG (`importance_plot_filename`, `beeswarm_plot_filename`, `dependence_plot_prefix`)—live inside the same dictionary so you never touch the global analysis config.
   - `molecules_color` and `molecules_label` only matter when you want persistent color/label assignments in plots and reports.
 - **`is_debug_true` (optional):** Toggle when you want verbose logs; you can omit it entirely if you prefer the default `False`.

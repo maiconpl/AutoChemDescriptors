@@ -1,15 +1,14 @@
 """Entry point for running AutoChemDescriptors example locally."""
 
+from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 from pathlib import Path
 import sys
 
 # Ensure the repository root (which contains the auto_chem_descriptors package)
-# is available even when PYTHONPATH points directly to the package.
+# is available even when PYTHONPATH points directly to the package directory.
 project_root = Path(__file__).resolve().parents[2]
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
-
-from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 
 
 # from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
@@ -124,7 +123,8 @@ if __name__ == '__main__':
                 0.9089714453,  # GAA25
                 0.9019378755,  # GAA35
                 0.8889553183,  # GAA45
-                0.9123450000   # GANT (placeholder; replace with the real target)
+                # GANT (placeholder; replace with the real target)
+                0.9123450000
             ],
             "task": "regression",
             "model": "random_forest",
@@ -132,6 +132,14 @@ if __name__ == '__main__':
             "scaling": "none",
             "background_size": 200,
             "dependence_plots": 2
+        },
+        "pcapg": {
+            "n_components": 8,      # latent dimension used for the projection
+            "alpha": 0.9,           # weight for the graph-preservation term
+            "beta": 0.04,           # strength of the L2,1 sparsity penalty
+            "lambda_reg": 1.2,      # regularization applied to the possibilistic graph
+            "n_neighbors": 10,      # neighbors considered when learning the adaptive graph
+            "top_features": 20      # number of descriptors shown in rankings/plots
         },
 
         "molecules_color": ['b', 'g', 'r', 'c', 'm', 'b', 'g', 'r', 'c', 'm', 'y',
