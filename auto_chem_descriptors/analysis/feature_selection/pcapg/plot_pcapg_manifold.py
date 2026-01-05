@@ -13,14 +13,16 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable, get_cmap
-from scipy import linalg
 from scipy.sparse.csgraph import minimum_spanning_tree
 from scipy.spatial.distance import pdist, squareform
+
+from .pcapg_axes import select_projection_axes
 
 
 def plot_pcapg_manifold(embedding: np.ndarray,
                         similarity: np.ndarray,
                         labels: Sequence[str],
+                        component_order: np.ndarray | None,
                         filename: str) -> str:
     """Plot the learned embedding with possibilistic graph overlays."""
     if embedding.ndim != 2 or embedding.shape[1] == 0:
@@ -28,7 +30,8 @@ def plot_pcapg_manifold(embedding: np.ndarray,
     if similarity.shape[0] != embedding.shape[0]:
         raise ValueError("Similarity matrix size must match embedding samples.")
 
-    coords = _refine_layout(embedding, similarity)
+    coords, axis_indices, _ = select_projection_axes(embedding, component_order)
+    coords = _normalize_coordinates(coords)
     degrees = similarity.sum(axis=1)
     norm = Normalize(vmin=float(np.min(degrees)), vmax=float(np.max(degrees)))
     cmap = get_cmap('viridis')
@@ -53,8 +56,8 @@ def plot_pcapg_manifold(embedding: np.ndarray,
                 color='#1f1f1f',
                 ha='left',
                 va='center')
-    ax.set_xlabel("PCAPG component 1", fontsize=12)
-    ax.set_ylabel("PCAPG component 2", fontsize=12)
+    ax.set_xlabel(f"PCAPG component {axis_indices[0]}", fontsize=12)
+    ax.set_ylabel(f"PCAPG component {axis_indices[1]}", fontsize=12)
     ax.grid(True, linestyle=(0, (2, 4)), linewidth=0.5, alpha=0.35)
     ax.set_title("Possibilistic graph-preserving embedding", fontsize=17, pad=12)
     fig.text(0.5,
@@ -79,71 +82,20 @@ def plot_pcapg_manifold(embedding: np.ndarray,
     return filename
 
 
-def _refine_layout(embedding: np.ndarray,
+def _refine_layout(coords: np.ndarray,
                    similarity: np.ndarray,
                    iterations: int = 280) -> np.ndarray:
     """Apply a force-directed refinement to minimize edge crossings."""
-    n_samples, n_components = embedding.shape
-    if n_components >= 2:
-        coords = embedding[:, :2].copy()
-    else:
-        coords = np.pad(embedding[:, :1], ((0, 0), (0, 1)), mode='constant')
-
-    coords = _spectral_initialization(similarity, coords)
-    coords -= np.mean(coords, axis=0, keepdims=True)
-    std = np.std(coords, axis=0, keepdims=True) + 1e-6
-    coords /= std
-
-    sym_sim = 0.5 * (similarity + similarity.T)
-    max_weight = float(np.max(sym_sim))
-    if max_weight > 0:
-        sym_sim /= max_weight
-
-    temperature = 1.0
-    for step_idx in range(iterations):
-        diff = coords[:, None, :] - coords[None, :, :]
-        distance_sq = np.sum(diff**2, axis=2) + 1e-9
-        np.fill_diagonal(distance_sq, np.inf)
-
-        repulsive = 0.015 / distance_sq
-        rep_force = np.sum(diff * repulsive[:, :, None], axis=1)
-
-        attractive = sym_sim
-        attr_force = np.sum(diff * attractive[:, :, None], axis=1)
-
-        displacement = rep_force - attr_force
-        step_size = 0.045 * temperature
-        coords += step_size * displacement
-
-        max_norm = np.max(np.linalg.norm(coords, axis=1))
-        if np.isfinite(max_norm) and max_norm > 0:
-            coords /= max_norm
-
-        temperature *= 0.985
-
-    coords -= np.mean(coords, axis=0, keepdims=True)
-    max_norm = np.max(np.linalg.norm(coords, axis=1)) + 1e-9
-    coords /= max_norm
     return coords
 
 
-def _spectral_initialization(similarity: np.ndarray,
-                             fallback: np.ndarray) -> np.ndarray:
-    """Use a Laplacian eigenmap to obtain a low-stress starting layout."""
-    sym_sim = 0.5 * (similarity + similarity.T)
-    degrees = np.sum(sym_sim, axis=1)
-    laplacian = np.diag(degrees) - sym_sim
-    deg_diag = np.diag(np.maximum(degrees, 1e-9))
-    try:
-        eigvals, eigvecs = linalg.eigh(laplacian, deg_diag)
-    except linalg.LinAlgError:
-        return fallback
-    order = np.argsort(eigvals)
-    non_trivial = [idx for idx in order if eigvals[idx] > 1e-8]
-    if len(non_trivial) < 2:
-        return fallback
-    basis = eigvecs[:, non_trivial[:2]]
-    return basis
+def _normalize_coordinates(coords: np.ndarray) -> np.ndarray:
+    """Center and scale coordinates to unit radius without altering orientation."""
+    centered = coords - np.mean(coords, axis=0, keepdims=True)
+    max_norm = np.max(np.linalg.norm(centered, axis=1))
+    if np.isfinite(max_norm) and max_norm > 0:
+        centered /= max_norm
+    return centered
 
 
 def _draw_edges(ax: plt.Axes, coords: np.ndarray, similarity: np.ndarray) -> None:

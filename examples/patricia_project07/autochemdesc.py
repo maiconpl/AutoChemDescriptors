@@ -1,15 +1,16 @@
 """Entry point for running AutoChemDescriptors example locally."""
 
-from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 from pathlib import Path
 import sys
 
 # Ensure the repository root (which contains the auto_chem_descriptors package)
-# is available even when PYTHONPATH points directly to the package directory.
+# is available before importing any project modules. Users no longer need to
+# set PYTHONPATH manually to the exact parent directory.
 project_root = Path(__file__).resolve().parents[2]
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
+from auto_chem_descriptors.main.main_auto_chem_descriptors import main_auto_chem_descriptors
 
 # from auto_chem_descriptors.core.pipeline import main_auto_chem_descriptor
 

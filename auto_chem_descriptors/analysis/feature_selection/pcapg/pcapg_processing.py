@@ -26,6 +26,8 @@ class PCAPGPayload:
     history: Dict[str, Sequence[float]]
     graph_profile: Dict[str, float]
     scaler: StandardScaler | None
+    component_variances: np.ndarray
+    component_order: np.ndarray
 
 
 def compute_pcapg_payload(descriptors_list: Sequence[Sequence[float]],
@@ -85,6 +87,8 @@ def compute_pcapg_payload(descriptors_list: Sequence[Sequence[float]],
     feature_scores = np.linalg.norm(projection, axis=1)
     ordered_indices = np.argsort(feature_scores)[::-1]
     graph_profile = _summarize_graph(similarity)
+    component_variances = np.var(embedding, axis=0)
+    component_order = np.argsort(component_variances)[::-1]
 
     return PCAPGPayload(
         feature_matrix=feature_matrix,
@@ -98,6 +102,8 @@ def compute_pcapg_payload(descriptors_list: Sequence[Sequence[float]],
         history=history,
         graph_profile=graph_profile,
         scaler=scaler,
+        component_variances=component_variances,
+        component_order=component_order,
     )
 
 
