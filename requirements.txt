@@ -1,10 +1,11 @@
 ase
 dscribe
 matplotlib
-numpy
+numpy>=1.23,<2
 pyscf
 pyberny
 rdkit
 scipy
 scikit-learn
 torch
+shap>=0.44,<0.50
