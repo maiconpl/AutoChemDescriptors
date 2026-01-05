@@ -7,6 +7,7 @@ from typing import Dict, List, Sequence
 from .plot_pcapg_feature_importance import plot_pcapg_feature_importance
 from .plot_pcapg_manifold import plot_pcapg_manifold
 from .plot_pcapg_convergence import plot_pcapg_convergence
+from .plot_pcapg_biplot import plot_pcapg_biplot
 
 
 def render_pcapg_figures(feature_names: Sequence[str],
@@ -36,7 +37,18 @@ def render_pcapg_figures(feature_names: Sequence[str],
         embedding,
         similarity,
         labels,
+        payload.component_order,
         str(config.get('manifold_plot_filename', 'plot_pcapg_manifold.png')),
+    )
+
+    figures['biplot'] = plot_pcapg_biplot(
+        embedding,
+        payload.projection_matrix,
+        ordered,
+        feature_names,
+        top_features,
+        payload.component_order,
+        str(config.get('biplot_plot_filename', 'plot_pcapg_biplot.png')),
     )
 
     figures['convergence'] = plot_pcapg_convergence(

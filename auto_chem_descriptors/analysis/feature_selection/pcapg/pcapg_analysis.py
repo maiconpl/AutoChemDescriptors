@@ -9,6 +9,7 @@ import numpy as np
 
 from .pcapg_processing import PCAPGPayload, compute_pcapg_payload
 from .pcapg_plotting import render_pcapg_figures
+from .pcapg_report import generate_pcapg_report
 
 
 def run_pcapg_analysis(descriptors_list,
@@ -22,12 +23,19 @@ def run_pcapg_analysis(descriptors_list,
                                     payload.ordered_indices,
                                     str(config.get('csv_filename', 'pcapg_feature_scores.csv')))
     figures = render_pcapg_figures(feature_names, payload, analysis, config)
+    report_filename = generate_pcapg_report(feature_names,
+                                            payload,
+                                            config,
+                                            analysis,
+                                            figures,
+                                            csv_filename)
     _log_console_summary(feature_names, payload.feature_scores)
     return {
         'payload': payload,
         'feature_names': feature_names,
         'csv_filename': csv_filename,
         'figures': figures,
+        'report_filename': report_filename,
     }
 
 
@@ -56,6 +64,7 @@ def _extract_pcapg_config(analysis: Dict[str, Any]) -> Dict[str, Any]:
         'top_features': 25,
         'ranking_plot_filename': 'plot_pcapg_importance.png',
         'manifold_plot_filename': 'plot_pcapg_manifold.png',
+        'biplot_plot_filename': 'plot_pcapg_biplot.png',
         'convergence_plot_filename': 'plot_pcapg_convergence.png',
         'csv_filename': 'pcapg_feature_scores.csv',
         'random_state': 42,
