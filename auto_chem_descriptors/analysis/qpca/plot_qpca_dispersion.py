@@ -3,97 +3,100 @@
 Created on December 10, 2025.
 
 @author: maicon & clayton
+Last modification by MPL: 03/01/2026 to change "myplot" to "_plot_setup".
 Last modification by MPL: 26/12/2025 to adjust the figure legend.
 Last modification by MPL: 10/12/2025.
 '''
 
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MaxAbsScaler
-from sklearn.feature_selection import SelectPercentile
-from sklearn.decomposition import PCA, KernelPCA
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.decomposition import PCA
 
 # Otherwise, does not work, it is mandatory:
 import matplotlib
 matplotlib.use('Agg') # or 'Qt5Agg', 'TkAgg', etc.
 import matplotlib.pyplot as plt
 
-def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
+def _plot_setup(score, coeff, labels, X_pca, analysis):
 
     import random
     random.seed(42)
 
-    X = descriptors_list
-    n_components = analysis['pca_grouping'][1]
-    print ("Matrix X:")
-    for i in X:
-        print (i)
-
-    scaler = StandardScaler()
-    scaler.fit(X)
-    X_scaled=scaler.transform(X)
-
-    colors = analysis['molecules_color']
-    labels = analysis['molecules_label']
-
-    pca = PCA(n_components=n_components)
-
-    # https://scikit-learn.org/stable/auto_examples/decomposition/plot_kernel_pca.html
-    #kernel_pca = KernelPCA(n_components=n_components, kernel="rbf", gamma=10, fit_inverse_transform=True, alpha=0.1)
-    #X_pca_tmp = pca.fit(X_scaled).transform(X_scaled)
-    #X_pca = kernel_pca.fit(X_scaled).transform(X_scaled)
-
-    pca.fit(X_scaled)
-    X_pca = pca.transform(X_scaled)
-
-    print ("Each component weight:", pca.explained_variance_ratio_)
-    print ("Sum of the components weight:", sum(pca.explained_variance_ratio_))
-
-    plt.xlabel("F1 (" + str( round(float(pca.explained_variance_ratio_[0]*100), 2) ) + " %)", size=15)
-    plt.ylabel("F2 (" + str( round(float(pca.explained_variance_ratio_[1]*100), 2) ) + " %)", size=15)
-
-    n_samples = len(X)
-    print("size X_pca:", len(X_pca), n_samples)
-    
     markers = ['o', 's', '^', 'D', '*', 'p', 'h', 'v', '<', '>', '*', '*', 'o']
-
     colors = ['k', 'b', 'g', 'r', 'c', 'm', 'y']
     edgecolors=['none', 'face', 'k', 'b']
 
-    for i in range( len(X_pca[:,0]) ):
+    y = ['k', 'b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k', 'r', 'm', 'b']
 
-        #color = (random.random(), random.random(), random.random())
+    xs = score[:,0]
+    ys = score[:,1]
+    n = coeff.shape[0]
+
+    scalex = 1.0/(xs.max() - xs.min())
+    scaley = 1.0/(ys.max() - ys.min())
+
+    molecules_label = analysis['molecules_label']
+
+    for i in range( len(xs)):
+
         marker = random.choice(markers)
         color = random.choice(colors)
         edgecolor = random.choice(edgecolors)
 
-        plt.scatter(X_pca[i, 0], X_pca[i, 1], c=color, s=80, label=labels[i], marker=marker, edgecolors=edgecolor)
+        plt.scatter(xs[i] * scalex, ys[i] * scaley, c=color, s=80, label=molecules_label[i], marker=marker, edgecolors=edgecolor)
+
+    for i in range(n):
+        plt.arrow(0, 0, coeff[i,0], coeff[i,1],color = 'r',alpha = 1.0)
+        if labels is None:
+            plt.text(coeff[i,0]* 1.15, coeff[i,1] * 1.15, "Var"+str(i+1), color = 'b', ha = 'center', va = 'center', size=10)
+        else:
+            plt.text(coeff[i,0]* 1.15, coeff[i,1] * 1.15, labels[i], color = 'b', ha = 'center', va = 'baseline', size=8, rotation=0)
+
+#def plot_pca_dispersion(descriptors_list, analysis):
+def plot_qpca_dispersion(X_pca, , analysis):
+
+    #X = descriptors_list
+    #n_components = analysis['pca_grouping'][1]
+
+    #print ("Matrix X:")
+    #for i in X:
+    #    print (i)
+
+    #scaler = StandardScaler()
+    #scaler.fit(X)
+    #X_scaled = scaler.transform(X)
+
+    #pca = PCA(n_components=n_components)
+    #pca.fit(X_scaled)
+    #X_pca = pca.transform(X_scaled)
+
+    labels = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03", "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge", "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons", "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt"]
+
+    plt.xlabel("F1 (")# + str( round(float(pca.explained_variance_ratio_[0]*100), 2) ) + " %)", size=15)
+    plt.ylabel("F2 (")# + str( round(float(pca.explained_variance_ratio_[1]*100), 2) ) + " %)", size=15)
+    plt.grid()
+
+    #Call the function. Use only the 2 PCs.
+    _plot_setup(X_pca[:,0:2], np.transpose(pca.components_[0:2, :]), labels, X_pca, analysis)
 
     if "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_bbox_to_anchor" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" not in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol= 4 )
 
-    #elif "legend_size" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" not in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=4)
 
-    #elif "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=4)
 
-    #elif "legend_bbox_to_anchor" in analysis and "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         print("zoi")
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
@@ -104,5 +107,5 @@ def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
     plt.axvline(x=0, color='k', linestyle="--")
     plt.axhline(y=0, color='k', linestyle="--")
 
-    plt.savefig('plot_PCA_grouping.png',  bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
+    plt.savefig('plot_qPCA_dispersion.png', bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
     plt.close()

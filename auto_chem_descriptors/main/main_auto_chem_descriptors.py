@@ -3,6 +3,7 @@
 Created on December 03, 2025
 
 @author: maicon & clayton
+Last modification by MPL: 22/01/2026 to implement the selfies and input.
 Last modification by MPL: 28/12/2025 to implement the properties from the optimized geometry: total energy, HOMO, LUMO, band-gap, electronegativiy, hardness and dipole moment.
 Last modification by MPL: 24/12/2025 to import the structures from XYZ files.; )
 Last modification by MPL: 17/12/2025 to implement the analysis and debug.; )
@@ -29,7 +30,10 @@ from ..analysis.clustering.dbscan.dbscan_analysis import run_dbscan_analysis
 from ..analysis.feature_selection.laplacian_score.laplacian_analysis import run_laplacian_score_analysis
 from ..analysis.feature_selection.pcapg import run_pcapg_analysis
 from ..analysis.shap.shap_analysis import run_shap_analysis
+from ..analysis.qpca.qpca_analysis import run_qpca_analysis
 import csv
+
+import selfies as sf
 
 def main_auto_chem_descriptors(n_jobs,
                               input_flow_controller,
@@ -50,7 +54,7 @@ def main_auto_chem_descriptors(n_jobs,
 
     print("Begin input prints:")
     print("input_flow_controller:", input_flow_controller)
-    print("molecules_coded_list:", molecules_coded_list)
+    print("molecules_coded_list (" + input_flow_controller['molecular_encoding'] + ") :", molecules_coded_list)
 
     if len(calculator_controller) > 0:
        calculator_controller['properties'] = False # "if only if: descriptors_type != 'QC'"
@@ -71,6 +75,20 @@ def main_auto_chem_descriptors(n_jobs,
 
     molecular_encoding = input_flow_controller['molecular_encoding']
     descriptors_type = input_flow_controller['descriptors_type'].upper()
+
+    if molecular_encoding.lower() == "selfies":
+        print("\nBegin: selfies to smiles:")
+
+        molecules_coded_list_selfies = molecules_coded_list
+        molecules_coded_list = []
+        for iSymbols in molecules_coded_list_selfies:
+            molecules_coded_list.append( sf.decoder(iSymbols) )
+
+        print("molecules_coded_list (from selfies to smiles):")
+        for iSymbols in molecules_coded_list:
+            print(iSymbols)
+
+        print("End: selfies to smiles.")
 
     # Legacy inputs still allow "SMILES" even though all RDKit-based flows
     # now branch on "RDKIT".
@@ -240,6 +258,10 @@ def main_auto_chem_descriptors(n_jobs,
     if 'shap_validation' in analysis:
         print("\nSHAP-based validation:\n")
         run_shap_analysis(descriptors_list, analysis)
+
+    if 'qpca' in analysis:
+        print("\nqPCA grouping analysis:\n")
+        run_qpca_analysis(descriptors_list, molecular_encoding, analysis)
 
     ## END: ANALYSIS ##
 
