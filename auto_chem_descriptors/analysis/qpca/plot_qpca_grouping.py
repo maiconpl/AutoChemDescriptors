@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MaxAbsScaler
 from sklearn.feature_selection import SelectPercentile
-from sklearn.decomposition import PCA, KernelPCA
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 
 # Otherwise, does not work, it is mandatory:
@@ -19,41 +19,21 @@ import matplotlib
 matplotlib.use('Agg') # or 'Qt5Agg', 'TkAgg', etc.
 import matplotlib.pyplot as plt
 
-def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
+def plot_qpca_grouping(X_pca, explained_variance_ratio, analysis):
 
     import random
     random.seed(42)
 
-    X = descriptors_list
-    n_components = analysis['pca_grouping'][1]
-    print ("Matrix X:")
-    for i in X:
-        print (i)
-
-    scaler = StandardScaler()
-    scaler.fit(X)
-    X_scaled=scaler.transform(X)
-
     colors = analysis['molecules_color']
     labels = analysis['molecules_label']
 
-    pca = PCA(n_components=n_components)
+    print ("Each component weight:", explained_variance_ratio)
+    print ("Sum of the components weight:", sum(explained_variance_ratio))
 
-    # https://scikit-learn.org/stable/auto_examples/decomposition/plot_kernel_pca.html
-    #kernel_pca = KernelPCA(n_components=n_components, kernel="rbf", gamma=10, fit_inverse_transform=True, alpha=0.1)
-    #X_pca_tmp = pca.fit(X_scaled).transform(X_scaled)
-    #X_pca = kernel_pca.fit(X_scaled).transform(X_scaled)
+    plt.xlabel("F1 (" + str( round(float(explained_variance_ratio[0]*100), 2) ) + " %)", size=15)
+    plt.ylabel("F2 (" + str( round(float(explained_variance_ratio[1]*100), 2) ) + " %)", size=15)
 
-    pca.fit(X_scaled)
-    X_pca = pca.transform(X_scaled)
-
-    print ("Each component weight:", pca.explained_variance_ratio_)
-    print ("Sum of the components weight:", sum(pca.explained_variance_ratio_))
-
-    plt.xlabel("F1 (" + str( round(float(pca.explained_variance_ratio_[0]*100), 2) ) + " %)", size=15)
-    plt.ylabel("F2 (" + str( round(float(pca.explained_variance_ratio_[1]*100), 2) ) + " %)", size=15)
-
-    n_samples = len(X)
+    n_samples = len(X_pca)
     print("size X_pca:", len(X_pca), n_samples)
     
     markers = ['o', 's', '^', 'D', '*', 'p', 'h', 'v', '<', '>', '*', '*', 'o']
@@ -104,5 +84,5 @@ def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
     plt.axvline(x=0, color='k', linestyle="--")
     plt.axhline(y=0, color='k', linestyle="--")
 
-    plt.savefig('plot_PCA_grouping.png',  bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
+    plt.savefig('plot_qPCA_grouping.png',  bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
     plt.close()
