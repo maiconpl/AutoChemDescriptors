@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 '''
-Created on December 10, 2025.
+Created on January 22, 2026.
 
 @author: maicon & clayton
-Last modification by MPL: 22/01/2026.
+Last modification by MPL: 24/01/2026: to try to understand the "precomputed" kernels.
 '''
 
 from sklearn.decomposition import KernelPCA
@@ -16,7 +16,7 @@ class QPCA:
           self.n_components = n_components
           self.feature_map = feature_map
 
-      def fit(self, matrix_inp):
+      def get_qkernel(self, matrix_inp):
 
           kernel = FidelityQuantumKernel(feature_map=self.feature_map)
           qmatrix = kernel.evaluate(x_vec=matrix_inp)
@@ -25,28 +25,45 @@ class QPCA:
 
       def transform(self, matrix_inp):
 
-          # Assuming 'matrix' is the 4x4 Qiskit matrix from your previous step
-          # n_components=2 projects your data into a 2D space
-          transformer = KernelPCA(n_components=self.n_components, kernel='precomputed')
-
-          # Fit and transform the matrix
-          # Note: When using 'precomputed', the input to fit_transform is the kernel matrix
-          qkernel = self.fit(matrix_inp)
+          # Get kernel matrix
+          qkernel = self.get_qkernel(matrix_inp)
 
           print("qkernel:", qkernel)
 
-          data_transformed = transformer.fit_transform(qkernel)
+          # call KernelPCA object
+          #transformer = KernelPCA(n_components=self.n_components, kernel='precomputed')
+          #kernel_PCA = KernelPCA(n_components=self.n_components, kernel='precomputed')
 
-          print("eigenvectors:", transformer.eigenvectors_)
-          print("eigenvalues:", transformer.eigenvalues_, type( transformer.eigenvalues_))
+          kernel_PCA = KernelPCA(n_components=None, kernel='precomputed')
+
+          # Fit and transform the matrix
+          # Note: When using 'precomputed', the input to fit_transform is the kernel matrix
+
+          kernel_PCA.fit(qkernel) # return the Object
+          X_qpca = kernel_PCA.transform(qkernel) # return: X_new ndarray of shape (n_samples, n_components)
+
+          #X_qpca = kernel_PCA.fit_transform(qkernel) # return: X_new ndarray of shape (n_samples, n_components)
+
+          print("eigenvectors:", kernel_PCA.eigenvectors_)
+          print("eigenvalues:", kernel_PCA.eigenvalues_, type(kernel_PCA.eigenvalues_))
 
           print("Projected Coordinates:")
-          print(data_transformed)
+          #print(data_transformed)
+          print(X_qpca)
+
+          #XXX = eigenvectors[:, valid_idx] * np.sqrt(eigenvalues[valid_idx])
+          #import numpy as np
+          #XXX = kernel_PCA.eigenvectors_ * np.sqrt( kernel_PCA.eigenvalues_)
+
+          #print("XXX:", XXX)
           
           tmp01 = 0.0
           explained_variance_ratio = []
+          eigenvectors = []
+          eigenvectors = kernel_PCA.eigenvectors_
 
-          eigenvalues_list_sorted = sorted(transformer.eigenvalues_.tolist(), reverse=True)
+          #eigenvalues_list_sorted = sorted(transformer.eigenvalues_.tolist(), reverse=True)
+          eigenvalues_list_sorted = sorted(kernel_PCA.eigenvalues_.tolist(), reverse=True)
 
           for i in range(self.n_components):
               tmp01 = eigenvalues_list_sorted[i]/sum(eigenvalues_list_sorted)
@@ -55,16 +72,4 @@ class QPCA:
 
           print("explained_variance_ratio:", explained_variance_ratio)
 
-          return data_transformed, explained_variance_ratio
-
-          #import matplotlib.pyplot as plt
-#
-#          labels = ["r", "b", 'k']
-#
-#          plt.figure(figsize=(8, 6))
-#          plt.scatter(data_transformed[:, 0], data_transformed[:, 1], cmap='viridis')
-#          plt.title("Quantum Kernel PCA")
-#          plt.xlabel("Principal Component 1")
-#          plt.ylabel("Principal Component 2")
-#          plt.grid(True)
-#          plt.show()
+          return X_qpca, explained_variance_ratio, eigenvectors

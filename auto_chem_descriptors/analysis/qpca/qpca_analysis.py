@@ -10,6 +10,7 @@ from typing import Any, Dict, List
 from .QPCA import QPCA
 #from .plot_qpca_dispersion import plot_qpca_dispersion
 from .plot_qpca_grouping import plot_qpca_grouping
+from .plot_qpca_heatmap import plot_qpca_heatmap
 
 from sklearn.preprocessing import StandardScaler
 
@@ -37,6 +38,8 @@ def run_qpca_analysis(descriptors_list: List[Any],
 
     feature_dimension = len(X[0]) # the number of qubits in the circuit
 
+    print("feature_dimension:", feature_dimension)
+
     if feature_map_type == "ZZFeatureMap" or feature_map_type == "ZZ":
 
         from qiskit.circuit.library import ZZFeatureMap
@@ -59,10 +62,13 @@ def run_qpca_analysis(descriptors_list: List[Any],
 
     qpca = QPCA(n_components=n_components, feature_map=feature_map)
 
-    X_qpca, explained_variance_ratio = qpca.transform(X_scaled)
+    X_qpca, explained_variance_ratio, eigenvectors = qpca.transform(X_scaled)
 
     print("X_qpca:", X_qpca)
     print("explained_variance_ratio:", explained_variance_ratio)
+    print("eigenvectors:", explained_variance_ratio)
 
     #plot_qpca_dispersion(X_qpca, components_percentage_sorted, analysis)
     plot_qpca_grouping(X_qpca, explained_variance_ratio, analysis)
+    #plot_qpca_heatmap(X_qpca, explained_variance_ratio, analysis)
+    #plot_qpca_heatmap(X_qpca, eigenvectors, analysis)

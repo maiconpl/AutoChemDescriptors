@@ -43,7 +43,6 @@ def plot_qpca_grouping(X_pca, explained_variance_ratio, analysis):
 
     for i in range( len(X_pca[:,0]) ):
 
-        #color = (random.random(), random.random(), random.random())
         marker = random.choice(markers)
         color = random.choice(colors)
         edgecolor = random.choice(edgecolors)
@@ -53,27 +52,21 @@ def plot_qpca_grouping(X_pca, explained_variance_ratio, analysis):
     if "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_bbox_to_anchor" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" not in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol= 4 )
 
-    #elif "legend_size" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" not in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=4)
 
-    #elif "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=4)
 
-    #elif "legend_bbox_to_anchor" in analysis and "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         print("zoi")
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
