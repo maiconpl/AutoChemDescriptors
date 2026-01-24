@@ -36,6 +36,8 @@ def plot_pca_heatmap(descriptors_list, analysis):
     pca.fit(X_scaled)
     X_pca = pca.transform(X_scaled)
 
+    print("X_pca:", X_pca)
+
     features_index = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03", "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge", "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons", "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt"]
 
     n_components = analysis['pca_grouping'][1]
@@ -44,11 +46,12 @@ def plot_pca_heatmap(descriptors_list, analysis):
     for i in range(n_components):
         components_name_list.append(tmp_string + " " + str(i + 1))
 
+    print("mmm0:", pca.components_)
+    print("mmm1:", pca.components_[0:n_components])
 
-    #plt.matshow(pca.components_, cmap='viridis')
     plt.matshow(pca.components_[0:n_components], cmap='viridis')
+
     plt.yticks([i for i in range(n_components)], components_name_list, size=10)
-    #plt.yticks([0, 1, 2], ["First component", "Second component", "Third component"], size=12)
     plt.colorbar()
     plt.xticks(range(0,len(X[0])), features_index, rotation=18, ha='left', size=10)
 

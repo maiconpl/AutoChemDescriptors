@@ -56,6 +56,12 @@ if __name__ == '__main__':
         "pca_grouping": [True, n_components],
         "pca_dispersion": [True, n_components],
 
+        "qpca": {
+          "feature_map": "ZZFeatureMap",
+          "entanglement": "full",
+          "n_components": n_components,
+        },
+
         "kmeans": {
             "k_min": 2,
             "k_max": 8,

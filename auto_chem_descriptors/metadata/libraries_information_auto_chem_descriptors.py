@@ -35,4 +35,7 @@ def libraries_information_auto_chem_descriptors():
     import ase
     print ("ASE:", ase.__version__)
 
+    import selfies
+    print ("selfies:", selfies.__version__)
+
     print("END: main libraries version.\n")
