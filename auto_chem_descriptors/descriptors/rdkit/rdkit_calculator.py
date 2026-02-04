@@ -2,6 +2,7 @@
 Created on December 08, 2025
 
 @author: maicon
+Last modification by MPL: 03/02/2026 to add the descriptors: "QED.weights_mean", "QED.weights_max", MolLogP".
 Last modification by MPL: 08/12/2025.
 '''
 
@@ -15,7 +16,12 @@ def rdkit_descriptor_function(mol):
 
     #print (Descriptors.FpDensityMorgan1(mol), Descriptors.FpDensityMorgan2(mol), Descriptors.FpDensityMorgan3(mol), Descriptors.MaxAbsPartialCharge(mol, force=False), Descriptors.MaxPartialCharge(mol, force=False), Descriptors.MinAbsPartialCharge(mol, force=False), Descriptors.MinPartialCharge(mol, force=False), Descriptors.ExactMolWt(mol), Descriptors.NumRadicalElectrons(mol), Descriptors.NumValenceElectrons(mol), AllChem.ComputeMolVolume(mol), Descriptors.HeavyAtomMolWt(mol))
 
-    descriptor = [Descriptors.FpDensityMorgan1(mol), Descriptors.FpDensityMorgan2(mol), Descriptors.FpDensityMorgan3(mol), Descriptors.MaxAbsPartialCharge(mol, force=False), Descriptors.MaxPartialCharge(mol, force=False), Descriptors.MinAbsPartialCharge(mol, force=False), Descriptors.MinPartialCharge(mol, force=False), Descriptors.ExactMolWt(mol), Descriptors.NumRadicalElectrons(mol), Descriptors.NumValenceElectrons(mol), AllChem.ComputeMolVolume(mol), Descriptors.HeavyAtomMolWt(mol)]
+    descriptor = [
+                Descriptors.FpDensityMorgan1(mol), Descriptors.FpDensityMorgan2(mol), Descriptors.FpDensityMorgan3(mol), Descriptors.MaxAbsPartialCharge(mol, force=False), Descriptors.MaxPartialCharge(mol, force=False), Descriptors.MinAbsPartialCharge(mol, force=False), Descriptors.MinPartialCharge(mol, force=False), Descriptors.ExactMolWt(mol), Descriptors.NumRadicalElectrons(mol), Descriptors.NumValenceElectrons(mol), AllChem.ComputeMolVolume(mol), Descriptors.HeavyAtomMolWt(mol),
+                Chem.QED.weights_mean(mol),
+                Chem.QED.weights_max(mol),
+                Descriptors.MolLogP(mol),
+                ]
 
     #print("descriptor into descriptor_function:", descriptor)
 

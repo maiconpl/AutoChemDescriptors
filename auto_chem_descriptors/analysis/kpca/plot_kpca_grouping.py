@@ -1,25 +1,17 @@
 #!/usr/bin/python3
 '''
-Created on December 10, 2025.
+Created on Februrary 1, 2026.
 
 @author: maicon & clayton
-Last modification by MPL: 26/12/2025 to adjust the figure legend.
-Last modification by MPL: 10/12/2025.
+Last modification by MPL: 01/02/2026.
 '''
-
-import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MaxAbsScaler
-from sklearn.feature_selection import SelectPercentile
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import MinMaxScaler
 
 # Otherwise, does not work, it is mandatory:
 import matplotlib
 matplotlib.use('Agg') # or 'Qt5Agg', 'TkAgg', etc.
 import matplotlib.pyplot as plt
 
-def plot_qpca_grouping(X_pca, explained_variance_ratio, analysis):
+def plot_kpca_grouping(X_pca, explained_variance_ratio, analysis):
 
     import random
     random.seed(42)
@@ -27,23 +19,26 @@ def plot_qpca_grouping(X_pca, explained_variance_ratio, analysis):
     colors = analysis['molecules_color']
     labels = analysis['molecules_label']
 
-    print ("Each component weight:", explained_variance_ratio)
-    print ("Sum of the components weight:", sum(explained_variance_ratio))
+    #print ("Each component weight:", explained_variance_ratio)
+    #print ("Sum of the components weight:", sum(explained_variance_ratio))
 
     plt.xlabel("F1 (" + str( round(float(explained_variance_ratio[0]*100), 2) ) + " %)", size=15)
     plt.ylabel("F2 (" + str( round(float(explained_variance_ratio[1]*100), 2) ) + " %)", size=15)
 
     n_samples = len(X_pca)
-    print("size X_pca:", len(X_pca), n_samples)
+    #print("size X_pca:", len(X_pca), n_samples)
     
     markers = ['o', 's', '^', 'D', '*', 'p', 'h', 'v', '<', '>', '*', '*', 'o']
 
     colors = ['k', 'b', 'g', 'r', 'c', 'm', 'y']
     edgecolors=['none', 'face', 'k', 'b']
 
+    kernel = analysis["kpca"]["kernel"]
+    gamma = analysis["kpca"]["gamma"]
+    plt.title('KPCA: kernel: ' + kernel + ', gamma: ' + str(gamma))
+
     for i in range( len(X_pca[:,0]) ):
 
-        #color = (random.random(), random.random(), random.random())
         marker = random.choice(markers)
         color = random.choice(colors)
         edgecolor = random.choice(edgecolors)
@@ -53,29 +48,22 @@ def plot_qpca_grouping(X_pca, explained_variance_ratio, analysis):
     if "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_bbox_to_anchor" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" not in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol= 4 )
 
-    #elif "legend_size" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" not in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=4)
 
-    #elif "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=4)
 
-    #elif "legend_bbox_to_anchor" in analysis and "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" in analysis and "legend_size" not in analysis and "legend_ncol" in analysis: # custom by user
         lgd = plt.legend(loc='upper center', prop={'size': 6}, bbox_to_anchor=analysis["legend_bbox_to_anchor"], fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
 
-    #elif "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
-        print("zoi")
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
  
     else: # default
@@ -84,5 +72,5 @@ def plot_qpca_grouping(X_pca, explained_variance_ratio, analysis):
     plt.axvline(x=0, color='k', linestyle="--")
     plt.axhline(y=0, color='k', linestyle="--")
 
-    plt.savefig('plot_qPCA_grouping.png',  bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
+    plt.savefig('plot_kPCA_grouping.png',  bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
     plt.close()

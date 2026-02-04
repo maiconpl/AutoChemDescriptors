@@ -9,3 +9,6 @@ scipy
 scikit-learn
 torch
 shap>=0.44,<0.50
+selfies
+qiskit
+qiskit_machine_learning

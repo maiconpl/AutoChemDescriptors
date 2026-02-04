@@ -10,7 +10,7 @@ from .get_rdkit_calculations import get_rdkit_calculations
 from ...utils import smile_molecule_representation
 from ...utils import smiles_checker
 
-def get_descriptors_smiles(n_jobs, molecules_coded_list, is_debug_true=True):
+def get_descriptors_rdkit(n_jobs, molecules_coded_list, is_debug_true=True):
 
     descriptors = []
     from ..io.get_atom_information import getAtomTypeCounter, getAtomType

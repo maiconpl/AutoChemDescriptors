@@ -3,6 +3,7 @@
 Created on December 03, 2025
 
 @author: maicon & clayton
+Last modification by MPL: 03/02/2026 to make a small refactoring, mostly changing "get_descriptors_smiles.py" to "get_descriptors_rdkit.py" and to add the descriptors: "QED.weights_mean", "QED.weights_max", MolLogP".
 Last modification by MPL: 22/01/2026 to implement the selfies and input.
 Last modification by MPL: 28/12/2025 to implement the properties from the optimized geometry: total energy, HOMO, LUMO, band-gap, electronegativiy, hardness and dipole moment.
 Last modification by MPL: 24/12/2025 to import the structures from XYZ files.; )
@@ -17,7 +18,7 @@ from datetime import datetime
 t0 = datetime.now()
 
 from ..descriptors.pyscf.get_descriptors_pyscf import get_descriptors_pyscf
-from ..descriptors.rdkit.get_descriptors_smiles import get_descriptors_smiles
+from ..descriptors.rdkit.get_descriptors_rdkit import get_descriptors_rdkit
 
 from ..metadata.software_information_auto_chem_descriptors import software_information_auto_chem_descriptors
 
@@ -29,8 +30,9 @@ from ..analysis.clustering.kmeans.kmeans_analysis import run_kmeans_analysis
 from ..analysis.clustering.dbscan.dbscan_analysis import run_dbscan_analysis
 from ..analysis.feature_selection.laplacian_score.laplacian_analysis import run_laplacian_score_analysis
 from ..analysis.feature_selection.pcapg import run_pcapg_analysis
-from ..analysis.shap.shap_analysis import run_shap_analysis
-from ..analysis.qpca.qpca_analysis import run_qpca_analysis
+#from ..analysis.shap.shap_analysis import run_shap_analysis
+from ..analysis.qkpca.qkpca_analysis import run_qkpca_analysis
+from ..analysis.kpca.kpca_analysis import run_kpca_analysis
 import csv
 
 import selfies as sf
@@ -104,9 +106,9 @@ def main_auto_chem_descriptors(n_jobs,
     ## BEGIN: DESCRIPTORS ##
 
     print("\nBegin descriptors " + '"'+ str(descriptors_type) + '"' + " information:")
-    #if descriptors_type == "SMILES":
+
     if descriptors_type == "RDKIT":
-       descriptors_list = get_descriptors_smiles(n_jobs, molecules_coded_list)#, is_debug_true)
+       descriptors_list = get_descriptors_rdkit(n_jobs, molecules_coded_list)
 
     if descriptors_type == "MBTR" or descriptors_type == "SOAP":
        descriptors_list, molecules_coded_from_xyz_list = get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true)
@@ -131,7 +133,6 @@ def main_auto_chem_descriptors(n_jobs,
 
     ## BEGIN: WRITING DESCRIPTORS ##
      
-    #if descriptors_type == "SMILES":
     if descriptors_type == "RDKIT":
 
        file_write_txt_name = 'descriptors_from_rdkit.txt'
@@ -142,7 +143,7 @@ def main_auto_chem_descriptors(n_jobs,
        csv_writer = csv.writer(file_write_csv)
 
        descriptors_name_from_rdkit = [
-            "FpDensityMorgan1", 
+            "FpDensityMorgan1",
             "FpDensityMorgan2",
             "FpDensityMorgan3",
             "MaxAbsPartialCharge",
@@ -154,6 +155,9 @@ def main_auto_chem_descriptors(n_jobs,
             "NumValenceElectrons",
             "ComputeMolVolume",
             "HeavyAtomMolWt",
+            "QED.weights_mean",
+            "QED.weights_max",
+            "MolLogP",
        ]
 
        # write header
@@ -177,7 +181,6 @@ def main_auto_chem_descriptors(n_jobs,
        file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_first_principles)  + "\n")
        csv_writer.writerow(descriptors_name_from_first_principles)
        print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
-
 
     if descriptors_type == "QC":
 
@@ -221,7 +224,6 @@ def main_auto_chem_descriptors(n_jobs,
 
     ## BEGIN: ANALYSIS ##
 
-    #if 'dscribe_plot' in analysis and descriptors_type != "SMILES":
     if 'dscribe_plot' in analysis and descriptors_type != "RDKIT":
         plot_dscribe(descriptors_list, descriptors_type, analysis)
 
@@ -229,12 +231,10 @@ def main_auto_chem_descriptors(n_jobs,
         print("\nPCA grouping analysis:\n")
         plot_pca_grouping(descriptors_list, molecular_encoding, analysis)
 
-    #if 'pca_heatmap' in analysis and descriptors_type == "SMILES":
     if 'pca_heatmap' in analysis and descriptors_type == "RDKIT":
         print("\nPCA heatmap:\n")
         plot_pca_heatmap(descriptors_list, analysis)
 
-    #if 'pca_dispersion' in analysis and descriptors_type == "SMILES":
     if 'pca_dispersion' in analysis and descriptors_type == "RDKIT":
         print("\nPCA dispersion:\n")
         plot_pca_dispersion(descriptors_list, analysis)
@@ -259,9 +259,13 @@ def main_auto_chem_descriptors(n_jobs,
         print("\nSHAP-based validation:\n")
         run_shap_analysis(descriptors_list, analysis)
 
-    if 'qpca' in analysis:
-        print("\nqPCA grouping analysis:\n")
-        run_qpca_analysis(descriptors_list, molecular_encoding, analysis)
+    if 'qkpca' in analysis:
+        print("\nqkPCA grouping analysis:\n")
+        run_qkpca_analysis(descriptors_list, molecular_encoding, analysis)
+
+    if 'kpca' in analysis:
+        print("\nkPCA grouping analysis:\n")
+        run_kpca_analysis(descriptors_list, molecular_encoding, analysis)
 
     ## END: ANALYSIS ##
 

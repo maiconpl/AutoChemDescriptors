@@ -2,7 +2,7 @@
 Created on December 7, 2025
 
 @author: maicon
-Last modification by MPL: 07/12/2025 in Betim.
+Last modification by MPL: 04/02/2026 in Betim.
 '''
 
 def libraries_information_auto_chem_descriptors():
@@ -35,4 +35,14 @@ def libraries_information_auto_chem_descriptors():
     import ase
     print ("ASE:", ase.__version__)
 
+    import selfies
+    print ("selfies:", selfies.__version__)
+
+    import qiskit
+    print ("qikist:", qiskit.__version__)
+
+    import qiskit_machine_learning
+    print ("qiskit_machine_learning:", qiskit_machine_learning.__version__)
+
     print("END: main libraries version.\n")
+

@@ -3,6 +3,7 @@
 Created on December 10, 2025.
 
 @author: maicon & clayton
+Last modification by MPL: 03/02/2026 to add the descriptors: "QED.weights_mean", "QED.weights_max", MolLogP".
 Last modification by MPL: 03/01/2026 to change "myplot" to "_plot_setup".
 Last modification by MPL: 26/12/2025 to adjust the figure legend.
 Last modification by MPL: 10/12/2025.
@@ -69,7 +70,7 @@ def plot_pca_dispersion(descriptors_list, analysis):
     pca.fit(X_scaled)
     X_pca = pca.transform(X_scaled)
 
-    labels = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03", "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge", "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons", "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt"]
+    labels = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03", "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge", "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons", "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt", "QED.weights_mean", "QED.weights_max", "MolLogP"]
 
     plt.xlabel("F1 (" + str( round(float(pca.explained_variance_ratio_[0]*100), 2) ) + " %)", size=15)
     plt.ylabel("F2 (" + str( round(float(pca.explained_variance_ratio_[1]*100), 2) ) + " %)", size=15)
