@@ -12,12 +12,12 @@ From a chemist’s standpoint, AutoChemDescriptors is the missing bridge between
 - Rank descriptors through Laplacian Score and Marginal Laplacian Score to keep only the manifold-preserving, tail-sensitive signals before downstream modeling.
 
 ## Before you begin
-1. Set up a Python 3 environment and install the packages listed in `requirements.txt` (RDKit, PySCF, DScribe, ASE, NumPy, SciPy, Matplotlib, scikit-learn, Torch, PyBERNY).
+1. Set up a Python 3 environment and install the packages listed in `requirements.txt` (RDKit, PySCF, DScribe, ASE, NumPy, SciPy, Matplotlib, scikit-learn, Torch, PyBERNY, Qiskit, qiskit_machine_learning).
 2. Place the `auto_chem_descriptors` package somewhere in your project workspace. You are free to organize your runs in separate folders; this guide does not rely on the bundled `examples` directory.
 
 ## Preparing your run script
 - Create a working directory (for instance, `~/chem_runs/run001`) and inside it create a file named `autochemdesc.py` with the following structure. All parameters—descriptor type, molecule list, calculator settings, PCA configuration, number of jobs, debug flag—are user-editable, but keep the structural skeleton intact.
-- edit ~/.bashrc and insert: " export "PYTHONPATH=/mnt/d/workspace/AutoChemDescriptors.0.0.8:$PYTHONPATH" "
+- edit ~/.bashrc and insert: " export "PYTHONPATH=/mnt/d/workspace/AutoChemDescriptors.0.0.10:$PYTHONPATH" "
 - source ~/.bashrch
 
 
@@ -136,10 +136,10 @@ def run_descriptor():
 
     input_flow_controller = {
         "molecular_encoding": "SMILES",  # mandatory: {"SMILES","SELFIES"}
-        "descriptors_type": "SMILES",    # mandatory: {"SMILES","MBTR"}
+        "descriptors_type": "SMILES",    # mandatory: {"RDKIT","MBTR"}
     }
 
-    molecules_coded_list = ["COc1ccccc1O"]  # mandatory: list of encodings
+    molecules_coded_list = ["COc1ccccc1O"]  # mandatory: list of encodings, in this calse SMILES. It is also possible to use SELFIES.
 
     calculator_controller = {}  # optional: e.g., PySCF, basis set, MBTR grid
 
@@ -177,6 +177,8 @@ if __name__ == "__main__":
 - **`calculator_controller` (optional unless you run MBTR):** Leave it empty for pure RDKit descriptors, or define PySCF/DScribe settings (basis set, convergence, grid) when requesting MBTR so quantum and descriptor backends stay synchronized.
 - **`analysis` (fully optional):** Remove the dictionary entirely for headless descriptor generation or include only the subsections you need.
   - `pca_heatmap`, `pca_grouping`, and `pca_dispersion` accept `[flag, n_components]`; the list structure is required only when the flag is `True`.
+  - `kpca`; necessary to use classical kernel PCA (kpca) grouping, such as RBF or linear kernel.
+  - `qkpca`; necessary to use quantum kernel PCA (qkpca) grouping, Qiskit and qiskit_machine_learning libraries are required.
   - `kmeans` requires `k_min`, `k_max`, and `random_state`; `use_minibatch`, `projection_components`, and reporting filenames are optional extras.
   - `dbscan` needs `min_samples`; `eps`, `n_jobs`, `metric_mode`, `precomputed_max_samples`, and `algorithm` tailor runtime versus accuracy and can be dropped when defaults suffice.
   - `laplacian_score` exposes the spectral ranking routines. Provide `k_neighbors` (k-NN graph size), `metric` (`"auto"`, `"tanimoto"`, or `"euclidean"`), `mode` (`"ls"`, `"mls"`, or `"both"`), and `quantile` (fraction of samples that define the MLS tails). Advanced users can extend the dictionary with `skew_left`, `skew_right`, or `adaptive_kernel`.
