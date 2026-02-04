@@ -1,0 +1,48 @@
+'''
+Created on December 7, 2025
+
+@author: maicon
+Last modification by MPL: 04/02/2026 in Betim.
+'''
+
+def libraries_information_auto_chem_descriptors():
+
+    print("\nBEGIN: main libraries verion:")
+    import platform
+    print("Python version:", platform.python_version())
+
+    import rdkit
+    print("RDKit version:", rdkit.__version__)
+
+    import pyscf
+    print ("PySCF:", pyscf.__version__)
+
+    import numpy as np
+    print ("Numpy:", np.__version__)
+
+    import scipy
+    print ("Scipy:", scipy.__version__)
+
+    import matplotlib as mpl
+    print ("Matplotlib:", mpl.__version__)
+
+    #import sklearn
+    #print ("Sklearn:", sklearn.__version__)
+
+    #import dscribe
+    #print ("Dscribe verion:", dir(dscribe))
+
+    import ase
+    print ("ASE:", ase.__version__)
+
+    import selfies
+    print ("selfies:", selfies.__version__)
+
+    import qiskit
+    print ("qikist:", qiskit.__version__)
+
+    import qiskit_machine_learning
+    print ("qiskit_machine_learning:", qiskit_machine_learning.__version__)
+
+    print("END: main libraries version.\n")
+

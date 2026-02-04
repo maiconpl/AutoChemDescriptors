@@ -1,0 +1,294 @@
+#!/usr/bin/python3
+'''
+Created on December 03, 2025
+
+@author: maicon & clayton
+Last modification by MPL: 03/02/2026 to make a small refactoring, mostly changing "get_descriptors_smiles.py" to "get_descriptors_rdkit.py" and to add the descriptors: "QED.weights_mean", "QED.weights_max", MolLogP".
+Last modification by MPL: 22/01/2026 to implement the selfies and input.
+Last modification by MPL: 28/12/2025 to implement the properties from the optimized geometry: total energy, HOMO, LUMO, band-gap, electronegativiy, hardness and dipole moment.
+Last modification by MPL: 24/12/2025 to import the structures from XYZ files.; )
+Last modification by MPL: 17/12/2025 to implement the analysis and debug.; )
+Last modification by MPL: 17/12/2025 to implement the output from print and deal with debug.
+Last modification by MPL: 07/12/2025 to implement the multiprocess to run PySCF in parallell. I run the Pampulha's lake running race. ; )
+'''
+
+from datetime import datetime
+
+# Initial time:
+t0 = datetime.now()
+
+from ..descriptors.pyscf.get_descriptors_pyscf import get_descriptors_pyscf
+from ..descriptors.rdkit.get_descriptors_rdkit import get_descriptors_rdkit
+
+from ..metadata.software_information_auto_chem_descriptors import software_information_auto_chem_descriptors
+
+from ..visualization.plot_dscribe import plot_dscribe
+from ..analysis.pca.plot_pca_grouping import plot_pca_grouping
+from ..analysis.pca.plot_pca_heatmap import plot_pca_heatmap
+from ..analysis.pca.plot_pca_dispersion import plot_pca_dispersion
+from ..analysis.clustering.kmeans.kmeans_analysis import run_kmeans_analysis
+from ..analysis.clustering.dbscan.dbscan_analysis import run_dbscan_analysis
+from ..analysis.feature_selection.laplacian_score.laplacian_analysis import run_laplacian_score_analysis
+from ..analysis.feature_selection.pcapg import run_pcapg_analysis
+#from ..analysis.shap.shap_analysis import run_shap_analysis
+from ..analysis.qkpca.qkpca_analysis import run_qkpca_analysis
+from ..analysis.kpca.kpca_analysis import run_kpca_analysis
+import csv
+
+import selfies as sf
+
+def main_auto_chem_descriptors(n_jobs,
+                              input_flow_controller,
+                              molecules_coded_list,
+                              calculator_controller,
+                              analysis=None,
+                              is_debug_true=None):
+
+    #########################
+    ###### BEGIN MAIN #######
+    #########################
+
+    software_information_auto_chem_descriptors()
+
+    print("--------------------------")
+    print("------ BEGIN OUTPUT ------")
+    print("--------------------------\n")
+
+    print("Begin input prints:")
+    print("input_flow_controller:", input_flow_controller)
+    print("molecules_coded_list (" + input_flow_controller['molecular_encoding'] + ") :", molecules_coded_list)
+
+    if len(calculator_controller) > 0:
+       calculator_controller['properties'] = False # "if only if: descriptors_type != 'QC'"
+
+    print("calculator_controller:", calculator_controller)
+
+    print("analysis:", analysis)
+    print("End input prints.")
+
+    if is_debug_true==None:
+       is_debug_true = False
+    elif is_debug_true == True:
+       is_debug_true = True
+    elif is_debug_true == False:
+       is_debug_true = False
+
+    is_force_field_true = False
+
+    molecular_encoding = input_flow_controller['molecular_encoding']
+    descriptors_type = input_flow_controller['descriptors_type'].upper()
+
+    if molecular_encoding.lower() == "selfies":
+        print("\nBegin: selfies to smiles:")
+
+        molecules_coded_list_selfies = molecules_coded_list
+        molecules_coded_list = []
+        for iSymbols in molecules_coded_list_selfies:
+            molecules_coded_list.append( sf.decoder(iSymbols) )
+
+        print("molecules_coded_list (from selfies to smiles):")
+        for iSymbols in molecules_coded_list:
+            print(iSymbols)
+
+        print("End: selfies to smiles.")
+
+    # Legacy inputs still allow "SMILES" even though all RDKit-based flows
+    # now branch on "RDKIT".
+    if descriptors_type == "SMILES":
+        descriptors_type = "RDKIT"
+    
+    if len(calculator_controller) != 0:
+       is_force_field_true = calculator_controller['is_force_field_true']
+
+    descriptors_list = []
+    n_molecules = len(molecules_coded_list)
+
+    ## BEGIN: DESCRIPTORS ##
+
+    print("\nBegin descriptors " + '"'+ str(descriptors_type) + '"' + " information:")
+
+    if descriptors_type == "RDKIT":
+       descriptors_list = get_descriptors_rdkit(n_jobs, molecules_coded_list)
+
+    if descriptors_type == "MBTR" or descriptors_type == "SOAP":
+       descriptors_list, molecules_coded_from_xyz_list = get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true)
+
+       if len(molecules_coded_list) == 0: # in case of getting the smiles from xyz
+       # redefine analysis dicitionary
+          analysis['molecules_label'] = molecules_coded_from_xyz_list 
+
+    if descriptors_type == "QC": # from quantum chemistry (QC) calculations.
+
+       calculator_controller['properties'] = True # "if only if: descriptors_type == 'QC'"
+
+       descriptors_list, molecules_coded_from_xyz_list = get_descriptors_pyscf(n_jobs, n_molecules, molecules_coded_list, descriptors_type, calculator_controller, is_debug_true)
+
+       if len(molecules_coded_list) == 0: # in case of getting the smiles from xyz
+       # redefine analysis dicitionary
+          analysis['molecules_label'] = molecules_coded_from_xyz_list 
+
+    print("descriptor:", descriptors_list)
+
+    ## END: DESCRIPTORS ##
+
+    ## BEGIN: WRITING DESCRIPTORS ##
+     
+    if descriptors_type == "RDKIT":
+
+       file_write_txt_name = 'descriptors_from_rdkit.txt'
+       file_write_csv_name = 'descriptors_from_rdkit.csv'
+
+       file_write_txt = open(file_write_txt_name, 'w')
+       file_write_csv = open(file_write_csv_name, mode='w', newline='')
+       csv_writer = csv.writer(file_write_csv)
+
+       descriptors_name_from_rdkit = [
+            "FpDensityMorgan1",
+            "FpDensityMorgan2",
+            "FpDensityMorgan3",
+            "MaxAbsPartialCharge",
+            "MaxPartialCharge",
+            "MinAbsPartialCharge",
+            "MinPartialCharge",
+            "ExactMolWt",
+            "NumRadicalElectrons",
+            "NumValenceElectrons",
+            "ComputeMolVolume",
+            "HeavyAtomMolWt",
+            "QED.weights_mean",
+            "QED.weights_max",
+            "MolLogP",
+       ]
+
+       # write header
+       file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_rdkit)  + "\n")
+       csv_writer.writerow(descriptors_name_from_rdkit)
+       print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
+       print ("#", *descriptors_name_from_rdkit)
+
+    if descriptors_type == "MBTR" or descriptors_type == "SOAP":
+
+       file_write_txt_name = 'descriptors_from_' + str(descriptors_type) + '.txt'
+       file_write_csv_name = 'descriptors_from_'+ str(descriptors_type) + '.csv'
+
+       file_write_txt = open(file_write_txt_name, 'w')
+       file_write_csv = open(file_write_csv_name, mode='w', newline='')
+       csv_writer = csv.writer(file_write_csv)
+
+       descriptors_name_from_first_principles = [" ".join(str(i) for i in range(len(descriptors_list[0])))]
+
+       # write header
+       file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_first_principles)  + "\n")
+       csv_writer.writerow(descriptors_name_from_first_principles)
+       print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
+
+    if descriptors_type == "QC":
+
+       file_write_txt_name = 'descriptors_from_' + str(descriptors_type) + '.txt'
+       file_write_csv_name = 'descriptors_from_'+ str(descriptors_type) + '.csv'
+
+       file_write_txt = open(file_write_txt_name, 'w')
+       file_write_csv = open(file_write_csv_name, mode='w', newline='')
+       csv_writer = csv.writer(file_write_csv)
+
+       descriptors_name_from_rdkit = [
+            "TotalEnergy-Ha.",
+            "HOMO-Ha.",
+            "LUMO-Ha.",
+            "LUMO (Hartree)",
+            "BAND-GAP-Ha.",
+            "Electronegativity-Ha.",
+            "Hardness-Ha.",
+            "DipoleMomentX-Debye",
+            "DipoleMomentY-Debye",
+            "DipoleMomentZ-Debye",
+       ]
+
+       # write header
+       file_write_txt.write("# ".join(str(i) for i in descriptors_name_from_rdkit)  + "\n")
+       csv_writer.writerow(descriptors_name_from_rdkit)
+       print("\nDesciptors list" + "(" + "'" + str(len(descriptors_list)) + "'"  + " molecules/substances; " + "'" + str(len(descriptors_list[0])) + "'"  + " features" + ")" + ":")
+       print ("#", *descriptors_name_from_rdkit)
+
+    for iPrint in descriptors_list:
+        file_write_txt.write(" ".join(str(i) for i in iPrint)  + "\n")
+        csv_writer.writerows([iPrint])
+        print(*iPrint, "number of features:", len(iPrint))
+
+    file_write_txt.close()
+    file_write_csv.close()
+
+    print("\nEnd descriptors " + '"'+ str(descriptors_type) + '"' + " information.")
+
+    ## BEGIN: WRITING DESCRIPTORS ##
+
+    ## BEGIN: ANALYSIS ##
+
+    if 'dscribe_plot' in analysis and descriptors_type != "RDKIT":
+        plot_dscribe(descriptors_list, descriptors_type, analysis)
+
+    if 'pca_grouping' in analysis:
+        print("\nPCA grouping analysis:\n")
+        plot_pca_grouping(descriptors_list, molecular_encoding, analysis)
+
+    if 'pca_heatmap' in analysis and descriptors_type == "RDKIT":
+        print("\nPCA heatmap:\n")
+        plot_pca_heatmap(descriptors_list, analysis)
+
+    if 'pca_dispersion' in analysis and descriptors_type == "RDKIT":
+        print("\nPCA dispersion:\n")
+        plot_pca_dispersion(descriptors_list, analysis)
+
+    if 'kmeans' in analysis:
+        print("\nK-Means clustering analysis:\n")
+        run_kmeans_analysis(descriptors_list, analysis)
+
+    if 'dbscan' in analysis:
+        print("\nDBSCAN clustering analysis:\n")
+        run_dbscan_analysis(descriptors_list, analysis)
+
+    if 'laplacian_score' in analysis:
+        print("\nLaplacian Score feature ranking:\n")
+        run_laplacian_score_analysis(descriptors_list, analysis)
+
+    if 'pcapg' in analysis:
+        print("\nPCAPG feature relevance analysis:\n")
+        run_pcapg_analysis(descriptors_list, analysis)
+
+    if 'shap_validation' in analysis:
+        print("\nSHAP-based validation:\n")
+        run_shap_analysis(descriptors_list, analysis)
+
+    if 'qkpca' in analysis:
+        print("\nqkPCA grouping analysis:\n")
+        run_qkpca_analysis(descriptors_list, molecular_encoding, analysis)
+
+    if 'kpca' in analysis:
+        print("\nkPCA grouping analysis:\n")
+        run_kpca_analysis(descriptors_list, molecular_encoding, analysis)
+
+    ## END: ANALYSIS ##
+
+    print("\n------------------------")
+    print("------ END OUTPUT ------")
+    print("------------------------")
+
+    ######################
+    ###### END MAIN ######
+    ######################
+
+    # Main libraries version:
+    from ..metadata.libraries_information_auto_chem_descriptors import libraries_information_auto_chem_descriptors
+    libraries_information_auto_chem_descriptors()
+
+    # Measuring the execution time
+    delta_t = datetime.now() - t0
+
+    # Measuring the execution time
+    delta_t = datetime.now() - t0
+
+    #Final time
+    print ("Execution time:", delta_t)
+
+    # Date and time of execution
+    print ("Date and time of execution:", t0.strftime("%Y-%m-%d, %H:%M"))
