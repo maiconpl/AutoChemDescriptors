@@ -3,6 +3,7 @@
 Created on December 10, 2025.
 
 @author: maicon & clayton
+Last modification by MPL: 03/02/2026 to add the descriptors: "QED.weights_mean", "QED.weights_max", MolLogP".
 Last modification by MPL: 26/12/2025 to adjust the figure legend.
 Last modification by MPL: 10/12/2025.
 '''
@@ -37,23 +38,34 @@ def plot_pca_heatmap(descriptors_list, analysis):
     X_pca = pca.transform(X_scaled)
 
     print("X_pca:", X_pca)
+    print("n_features:", len(X_pca[0]))
 
-    features_index = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03", "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge", "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons", "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt"]
+    features_index = ["FpDensityMorgan01", "FpDensityMorgan02", "FpDensityMorgan03",
+                      "MaxAbsPartialCharge", "MaxPartialCharge", "MinAbsPartialCharge",
+                      "MinPartialCharge", "ExactMolWt", "NumRadicalElectrons",
+                      "NumValenceElectrons", "MolVolume", "HeavyAtomMolWt",
+                      "QED.weights_mean",
+                      "QED.weights_max",
+                      "MolLogP",
+                      ]
+
+    print("features_index:", features_index)
 
     n_components = analysis['pca_grouping'][1]
     components_name_list = []
     tmp_string = "Comp."
+
     for i in range(n_components):
         components_name_list.append(tmp_string + " " + str(i + 1))
 
-    print("mmm0:", pca.components_)
-    print("mmm1:", pca.components_[0:n_components])
+    print("total pca.components_:", pca.components_)
+    print("selected pca.components:", pca.components_[0:n_components])
 
     plt.matshow(pca.components_[0:n_components], cmap='viridis')
 
     plt.yticks([i for i in range(n_components)], components_name_list, size=10)
     plt.colorbar()
-    plt.xticks(range(0,len(X[0])), features_index, rotation=18, ha='left', size=10)
+    plt.xticks(range(0, len(X[0])), features_index, rotation=18, ha='left', size=10)
 
     plt.savefig('plot_PCA_heatmap.png', bbox_inches='tight', dpi=300)
 

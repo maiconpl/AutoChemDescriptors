@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 from .QPCA import QPCA
 #from .plot_qpca_dispersion import plot_qpca_dispersion
 from .plot_qpca_grouping import plot_qpca_grouping
-from .plot_qpca_heatmap import plot_qpca_heatmap
+#from .plot_qpca_heatmap import plot_qpca_heatmap
 
 from sklearn.preprocessing import StandardScaler
 
@@ -30,9 +30,9 @@ def run_qpca_analysis(descriptors_list: List[Any],
     feature_map_type = analysis['qpca']['feature_map']
     entanglement = analysis['qpca']['entanglement']
 
-    heatmap = analysis['qpca']['heatmap']
-    grouping = analysis['qpca']['grouping']
-    dispersion = analysis['qpca']['dispersion']
+    #heatmap = analysis['qpca']['heatmap']
+    #grouping = analysis['qpca']['grouping']
+    #dispersion = analysis['qpca']['dispersion']
 
     X = descriptors_list
 
