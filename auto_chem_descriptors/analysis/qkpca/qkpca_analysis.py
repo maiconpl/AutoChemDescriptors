@@ -7,14 +7,15 @@ Last modification by MPL: 22/01/2026.
 '''
 
 from typing import Any, Dict, List
-from .QPCA import QPCA
-#from .plot_qpca_dispersion import plot_qpca_dispersion
-from .plot_qpca_grouping import plot_qpca_grouping
-#from .plot_qpca_heatmap import plot_qpca_heatmap
+from .QKPCA import QKPCA
+#from .plot_qkpca_dispersion import plot_qkpca_dispersion
+from .plot_qkpca_grouping import plot_qkpca_grouping
+#from .plot_qkpca_heatmap import plot_qkpca_heatmap
 
 from sklearn.preprocessing import StandardScaler
+from .print_feature_map import print_feature_map
 
-def run_qpca_analysis(descriptors_list: List[Any],
+def run_qkpca_analysis(descriptors_list: List[Any],
                       molecular_encoding: List[Any],
                       analysis: Dict[str, Any],
                       ) -> Dict[str, Any]:
@@ -26,13 +27,13 @@ def run_qpca_analysis(descriptors_list: List[Any],
     print(molecular_encoding)
     print(analysis)
 
-    n_components = analysis['qpca']['n_components']
-    feature_map_type = analysis['qpca']['feature_map']
-    entanglement = analysis['qpca']['entanglement']
+    n_components = analysis['qkpca']['n_components']
+    feature_map_type = analysis['qkpca']['feature_map']
+    entanglement = analysis['qkpca']['entanglement']
 
-    #heatmap = analysis['qpca']['heatmap']
-    #grouping = analysis['qpca']['grouping']
-    #dispersion = analysis['qpca']['dispersion']
+    #heatmap = analysis['qkpca']['heatmap']
+    #grouping = analysis['qkpca']['grouping']
+    #dispersion = analysis['qkpca']['dispersion']
 
     X = descriptors_list
 
@@ -53,22 +54,27 @@ def run_qpca_analysis(descriptors_list: List[Any],
     elif feature_map_type == "PauliFeatureMap" or feature_map_type.lower() == "pauli":
 
         from qiskit.circuit.library import PauliFeatureMap
-        #feature_map = PauliFeatureMap(feature_dimension=2, reps=2, entanglement=entanglement)
         feature_map = PauliFeatureMap(feature_dimension=feature_dimension, reps=2, entanglement=entanglement)
+
+    print_feature_map(feature_map, feature_map_type, entanglement)
 
     scaler = StandardScaler()
     scaler.fit(X)
     X_scaled = scaler.transform(X)
 
-    qpca = QPCA(n_components=n_components, feature_map=feature_map)
+    qkpca = QKPCA(n_components=n_components, feature_map=feature_map)
 
-    X_qpca, explained_variance_ratio, eigenvectors = qpca.transform(X_scaled)
+    X_qkpca, explained_variance_ratio, eigenvectors = qkpca.transform(X_scaled)
 
-    print("X_qpca:", X_qpca)
-    print("explained_variance_ratio:", explained_variance_ratio)
-    print("eigenvectors:", explained_variance_ratio)
+    print("\n--- Begin: Quantum kernel PCA information ---")
+    print('QKPCA: FQK, ' + feature_map_type + ', entanglement: ' + entanglement)
+    print("qkpca n_components:", n_components)
+    print("X_qkpca:", X_qkpca)
+    print("qkpca explained_variance_ratio:", explained_variance_ratio)
+    #print("eigenvectors:", explained_variance_ratio)
+    print("--- End: Quantum kernel PCA information ---\n")
 
-    #plot_qpca_dispersion(X_qpca, components_percentage_sorted, analysis)
-    plot_qpca_grouping(X_qpca, explained_variance_ratio, analysis)
-    #plot_qpca_heatmap(X_qpca, explained_variance_ratio, analysis)
-    #plot_qpca_heatmap(X_qpca, eigenvectors, analysis)
+    #plot_qkpca_dispersion(X_qkpca, components_percentage_sorted, analysis)
+    plot_qkpca_grouping(X_qkpca, explained_variance_ratio, analysis)
+    #plot_qkpca_heatmap(X_qkpca, explained_variance_ratio, analysis)
+    #plot_qkpca_heatmap(X_qkpca, eigenvectors, analysis)

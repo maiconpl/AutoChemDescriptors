@@ -31,7 +31,7 @@ from ..analysis.clustering.dbscan.dbscan_analysis import run_dbscan_analysis
 from ..analysis.feature_selection.laplacian_score.laplacian_analysis import run_laplacian_score_analysis
 from ..analysis.feature_selection.pcapg import run_pcapg_analysis
 #from ..analysis.shap.shap_analysis import run_shap_analysis
-from ..analysis.qpca.qpca_analysis import run_qpca_analysis
+from ..analysis.qkpca.qkpca_analysis import run_qkpca_analysis
 from ..analysis.kpca.kpca_analysis import run_kpca_analysis
 import csv
 
@@ -259,9 +259,9 @@ def main_auto_chem_descriptors(n_jobs,
         print("\nSHAP-based validation:\n")
         run_shap_analysis(descriptors_list, analysis)
 
-    if 'qpca' in analysis:
-        print("\nqPCA grouping analysis:\n")
-        run_qpca_analysis(descriptors_list, molecular_encoding, analysis)
+    if 'qkpca' in analysis:
+        print("\nqkPCA grouping analysis:\n")
+        run_qkpca_analysis(descriptors_list, molecular_encoding, analysis)
 
     if 'kpca' in analysis:
         print("\nkPCA grouping analysis:\n")

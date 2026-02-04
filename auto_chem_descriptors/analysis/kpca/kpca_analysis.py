@@ -3,7 +3,7 @@
 Created on Februrary 1, 2026.
 
 @author: maicon & clayton
-Last modification by MPL: 01/02/2026.
+Last modification by MPL: 04/02/2026.
 '''
 
 from typing import Any, Dict, List
@@ -43,46 +43,53 @@ def run_kpca_analysis(descriptors_list: List[Any],
     if kernel == "linear":
        K = linear_kernel(X_scaled)
 
-    print("K:", K)
+    #print("K:", K)
 
     #K_test = rbf_kernel(X_scaled, X_scaled, gamma=10.0)
 
-    kernel_pca = KernelPCA(n_components=None, kernel="precomputed") #, fit_inverse_transform=False)
-    #kernel_pca = KernelPCA(n_components=None, kernel=kernel, gamma=gamma)
+    kpca = KernelPCA(n_components=None, kernel="precomputed") #, fit_inverse_transform=False)
+    #kpca = KernelPCA(n_components=None, kernel=kernel, gamma=gamma)
 
-    X_kernel_pca = kernel_pca.fit(K).transform(K)
-    #kernel_pca.fit(K)
-    #X_kernel_pca = kernel_pca.transform(K)
-    #X_kernel_pca = kernel_pca.transform(K)
+    X_kpca = kpca.fit(K).transform(K)
+    #kpca.fit(K)
+    #X_kpca = kpca.transform(K)
+    #X_kpca = kpca.fit_transform(K)
 
-    #X_kernel_pca = kernel_pca.fit_transform(K)
+    #kpca.fit(X_scaled)
+    #X_kpca = kpca.transform(X_scaled)
 
-    #kernel_pca.fit(X_scaled)
-    #X_kernel_pca = kernel_pca.transform(X_scaled)
-
-    print("X_kernel_pca:", X_kernel_pca)
+    #print("X_kpca:", X_kpca)
 
     tmp01 = 0.0
     explained_variance_ratio = []
-    eigenvectors = []
-    eigenvectors = kernel_pca.eigenvectors_
+    #eigenvectors = []
+    #eigenvectors = kpca.eigenvectors_
 
-    print("xxxx eigenvectors:", kernel_pca.eigenvectors_)
-    #print("xxxx components:", kernel_pca.components_) # this does not work for kernelPCA
-    print("xxxx eigenvalues:", kernel_pca.eigenvalues_)
+    #print("xxxx eigenvectors:", kpca.eigenvectors_)
+    #print("xxxx components:", kpca.components_) # this does not work for kernelPCA
+    #print("xxxx eigenvalues:", kpca.eigenvalues_)
 
-    #eigenvalues_list_sorted = sorted(transformer.eigenvalues_.tolist(), reverse=True)
-    eigenvalues_list_sorted = sorted(kernel_pca.eigenvalues_.tolist(), reverse=True)
+    eigenvalues_list_sorted = sorted(kpca.eigenvalues_.tolist(), reverse=True)
 
     for i in range(n_components):
         tmp01 = eigenvalues_list_sorted[i]/sum(eigenvalues_list_sorted)
         explained_variance_ratio.append( tmp01 )
         tmp01 = 0.0
 
-    print("xxxxx explained_variance_ratio:", explained_variance_ratio)
+    #print("xxxxx explained_variance_ratio:", explained_variance_ratio)
 
     #print("X_kpca:", X_kpca)
     #print("explained_variance_ratio:", explained_variance_ratio)
     #print("eigenvectors:", explained_variance_ratio)
 
-    plot_kpca_grouping(X_kernel_pca, explained_variance_ratio, analysis)
+    print("\n--- Begin: kernel PCA information ---")
+    print('KPCA: kernel: ' + kernel + ', gamma: ' + str(gamma))
+    print("kpca n_components:", n_components)
+    print("X_kpca:", X_kpca)
+    print("kpca explained_variance_ratio:", explained_variance_ratio)
+    print("kpca eigenvalues:", kpca.eigenvalues_)
+    print("kpca eigenvectors:", kpca.eigenvectors_)
+    #print("xxxx components:", kpca.components_) # this does not work for kernelPCA
+    print("--- End: kernel PCA information ---\n")
+
+    plot_kpca_grouping(X_kpca, explained_variance_ratio, analysis)

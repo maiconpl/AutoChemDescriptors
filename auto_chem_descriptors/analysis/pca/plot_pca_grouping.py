@@ -95,7 +95,6 @@ def plot_pca_grouping(descriptors_list, molecular_encoding, analysis):
 
     #elif "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
     elif "legend_bbox_to_anchor" not in analysis and "legend_size" in analysis and "legend_ncol" in analysis: # custom by user
-        print("zoi")
         lgd = plt.legend(loc='upper center', prop={'size': int(analysis["legend_size"])}, bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=True, ncol=int(analysis["legend_ncol"]))
  
     else: # default
