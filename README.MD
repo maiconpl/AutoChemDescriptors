@@ -4,6 +4,9 @@
 
 <img src="./maiconpl/AutoChemDescriptors/blob/main/AutoChemDescriptors_logo_05_02_26_from_powerpoint.png" alt="Software Logo" width="100"/>
 
+<img src="https://github.com/maiconpl/AutoChemDescriptors/blob/main/AutoChemDescriptors_logo_05_02_26_from_powerpoint.png" alt="Software Logo" width="100"/>
+
+
 From a chemist’s standpoint, AutoChemDescriptors is the missing bridge between raw SMILES lists and ready-to-interpret chemical insight. It translates molecular strings into quantitative descriptors, optionally optimizes geometries quantum-mechanically, and produces exploratory analyses that reveal similarities, trends, and outliers across organic molecules and materials—all without micromanaging multiple standalone tools.
 
 ## Capabilities at a glance
